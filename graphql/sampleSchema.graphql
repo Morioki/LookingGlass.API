@@ -24,7 +24,7 @@ type TodosResult {
 
 type Query {
   todos: TodosResult!
-  todo(todoId: ID!): TodoResult
+  todo(todoId: ID!): TodoResult!
 }
 
 type DeleteTodoResult {
@@ -34,7 +34,7 @@ type DeleteTodoResult {
 
 type Mutation {
   createTodo(description: String!, dueDate: String!): TodoResult!
-  deleteTodo(todoId!): DeleteTodoResult!
+  deleteTodo(todoId: ID!): DeleteTodoResult!
   markDone(todoId: String!): TodoResult!
   updateDueDate(todoId: String, newDate: String!): TodoResult!
 }
