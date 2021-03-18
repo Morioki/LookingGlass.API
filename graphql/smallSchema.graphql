@@ -1,0 +1,32 @@
+schema {
+  query: Query
+#   mutation: Mutation
+}
+
+type Generation {
+  id: ID!
+  generationcode: String!
+  description: String!
+}
+
+type Platform {
+  id: ID!
+  generation: Generation
+  platformcode: String!
+  description: String!
+  handheld: Boolean!
+  active: Boolean!
+}
+
+type Query {
+  generations: [Generation]
+  generation(generationId: ID!): Generation
+
+  platforms: [Platform]
+  platform(platformId: ID!): Platform
+}
+
+
+# type Mutation {
+
+# }
