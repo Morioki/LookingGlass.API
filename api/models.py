@@ -1,6 +1,4 @@
-import sqlalchemy
 from sqlalchemy.orm import backref
-from sqlalchemy.sql.expression import false
 from main import db
 # from sqlalchemy.dialects.postgresql import 
 # from sqlalchemy import Computed
@@ -29,7 +27,7 @@ class Platforms(db.Model):
     handheld = db.Column(db.Boolean, nullable=False)
     active = db.Column(db.Boolean, nullable=False)
 
-    generation = db.relationship('PlatformGeneration', backref='platforms')
+    generation = db.relationship('PlatformGenerations', backref='platforms')
 
     def to_dict(self):
         return {
@@ -38,11 +36,12 @@ class Platforms(db.Model):
             'description': self.description, 
             'handheld': self.handheld,
             'active': self.active,
-            'generation': self.generation.to_dict()
+            'generation': self.generation.to_dict(),
+            'testing': self.generation
         }
 
 
-class PlatformGeneration(db.Model):
+class PlatformGenerations(db.Model):
     __tablename__ = 'platformgenerations'
     __table_args__ = {"schema": "lg"}
 
@@ -55,4 +54,24 @@ class PlatformGeneration(db.Model):
             "id": self.id,
             "generationcode": self.generationcode,
             "description": self.description
+        }
+
+class Genres(db.Model):
+    __tablename__ = 'genres'
+    __table_args__ = {'schema': 'lg'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(), nullable=False)
+    parentid = db.Column(db.Integer, db.ForeignKey('lg.genres.id', onupdate='CASCADE'))
+    active = db.Column(db.Boolean, nullable=False)
+
+    parent = db.relationship('Genres', remote_side=[id])
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'description': self.description,
+            'active': self.active,
+            'testing': self.parent,
+            'parent': self.parent.to_dict() if self.parent is not None else None
         }

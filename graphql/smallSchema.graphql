@@ -3,6 +3,13 @@ schema {
 #   mutation: Mutation
 }
 
+type Genre {
+  id: ID!
+  description: String!
+  parent: Genre
+  active: Boolean!
+}
+
 type Generation {
   id: ID!
   generationcode: String!
@@ -24,6 +31,9 @@ type Query {
 
   platforms: [Platform]
   platform(platformId: ID!): Platform
+
+  genres: [Genre]
+  genre(genreId: ID!): Genre
 }
 
 

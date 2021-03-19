@@ -4,10 +4,11 @@ from api import models
 
 from ariadne import load_schema_from_path, make_executable_schema, \
     graphql_sync, snake_case_fallback_resolvers, ObjectType
+from ariadne.contrib.tracing.apollotracing import ApolloTracingExtensionSync
 from ariadne.constants import PLAYGROUND_HTML
 from flask import request, jsonify
 from api.queries import resolve_generations, resolve_generation \
-    , resolve_platforms, resolve_platform
+    , resolve_platforms, resolve_platform, resolve_genres, resolve_genre
     
 # from api.queries import resolve_todos, resolve_todo
 # from api.mutations import resolve_create_todo, resolve_mark_done, resolve_delete_todo, resolve_update_due_date
@@ -22,6 +23,9 @@ query.set_field('generation', resolve_generation)
 
 query.set_field('platforms', resolve_platforms)
 query.set_field('platform', resolve_platform)
+
+query.set_field('genres', resolve_genres)
+query.set_field('genre', resolve_genre)
 
 # mutation.set_field("createTodo", resolve_create_todo)
 # mutation.set_field("markDone", resolve_mark_done)
@@ -51,7 +55,8 @@ def graphql_server():
         schema,
         data,
         context_value=request,
-        debug=app.debug
+        debug=app.debug,
+        # extensions=[ApolloTracingExtensionSync]
     )
 
     status_code = 200 if success else 400

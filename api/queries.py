@@ -1,12 +1,13 @@
 # from .models import Todo
-from .models import PlatformGeneration
+from .models import PlatformGenerations
 from .models import Platforms
+from .models import Genres
 from ariadne import convert_kwargs_to_snake_case
 
 # * Generation Resolvers
 def resolve_generations(obj, info):
     try:
-        generations = [gen.to_dict() for gen in PlatformGeneration.query.all()]
+        generations = [gen.to_dict() for gen in PlatformGenerations.query.all()]
         payload = generations
     except Exception as error:
         print(error)
@@ -18,7 +19,7 @@ def resolve_generations(obj, info):
 @convert_kwargs_to_snake_case
 def resolve_generation(obj, info, generation_id):
     try:
-        generation = PlatformGeneration.query.get(generation_id)
+        generation = PlatformGenerations.query.get(generation_id)
         payload = generation.to_dict()
     except AttributeError:  # todo not found
         payload = {
@@ -47,5 +48,26 @@ def resolve_platform(obj, info, platform_id):
         print(platform.to_dict())
         payload = platform.to_dict()
     except AttributeError: # TODO handle error data
+        pass
+    return payload
+
+# * Genre Resolvers
+def resolve_genres(obj, info):
+    try:
+        genres = [genre.to_dict() for genre in Genres.query.all()]
+        print(genres)
+        payload = genres
+    except Exception as error:
+        print(error)
+        payload = []
+    return payload
+
+@convert_kwargs_to_snake_case
+def resolve_genre(obj, info, genre_id):
+    try:
+        genre = Genres.query.get(genre_id)
+        print(genre.to_dict())
+        payload = genre.to_dict()
+    except Exception as error:
         pass
     return payload
