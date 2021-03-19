@@ -1,20 +1,4 @@
-from sqlalchemy.orm import backref
 from main import db
-# from sqlalchemy.dialects.postgresql import 
-# from sqlalchemy import Computed
-
-
-# CREATE TABLE lg.platforms (
-# 	id int4 NOT NULL GENERATED ALWAYS AS IDENTITY,
-# 	generationid int4 NOT NULL,
-# 	platformcode varchar(10) NOT NULL,
-# 	description varchar(100) NOT NULL,
-# 	handheld bool NOT NULL DEFAULT false,
-# 	active bool NOT NULL DEFAULT false,
-# 	CONSTRAINT platforms_pkey PRIMARY KEY (id),
-# 	CONSTRAINT platform_generation_fk FOREIGN KEY (generationid) REFERENCES lg.platformgenerations(id) ON UPDATE CASCADE
-# );
-
 
 class Platforms(db.Model):
     __tablename__ = 'platforms'
