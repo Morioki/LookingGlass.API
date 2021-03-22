@@ -1,4 +1,19 @@
+from sqlalchemy.orm import backref
 from main import db
+
+usersInRoles = db.Table('usersinroles',
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('userid', db.Integer, db.ForeignKey('lg.users.id')),
+    db.Column('roleid', db.Integer, db.ForeignKey('lg.userroles.id')),
+    schema='lg'
+)
+
+genretags = db.Table('genretags',
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('gameid', db.Integer, db.ForeignKey('lg.games.id')),
+    db.Column('genreid', db.Integer, db.ForeignKey('lg.genres.id')),
+    schema='lg'
+)
 
 class Platforms(db.Model):
     __tablename__ = 'platforms'
@@ -40,6 +55,7 @@ class PlatformGenerations(db.Model):
             "description": self.description
         }
 
+
 class Genres(db.Model):
     __tablename__ = 'genres'
     __table_args__ = {'schema': 'lg'}
@@ -58,4 +74,72 @@ class Genres(db.Model):
             'active': self.active,
             'testing': self.parent,
             'parent': self.parent.to_dict() if self.parent is not None else None
+        }
+
+
+class Users(db.Model):
+    __tablename__ = 'users'
+    __table_args__ = {'schema': 'lg'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), nullable=False)
+    firstname = db.Column(db.String(50), nullable=True)
+    lastname = db.Column(db.String(50), nullable=True)
+    accesstoken = db.Column(db.String(64), nullable=False)
+    entrydate = db.Column(db.DateTime(timezone=True))
+
+    roles = db.relationship('UserRoles', secondary=usersInRoles, backref='users')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'username': self.username,
+            'firstname': self.firstname,
+            'lastname': self.lastname,
+            # 'accesstoken': self.accesstoken,
+            'entrydate': self.entrydate.isoformat()
+        }
+
+
+class UserRoles(db.Model):
+    __tablename__ = 'userroles'
+    __table_args__ = {'schema': 'lg'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    rolename = db.Column(db.String(25), nullable=False)
+
+
+class Games(db.Model):
+    __tablename__ = 'games'
+    __table_args__ = {'schema': 'lg'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id', onupdate='CASCADE', ondelete='CASCADE'))
+    platformid = db.Column(db.Integer, db.ForeignKey('lg.platforms.id', onupdate='CASCADE'))
+    gamename = db.Column(db.String(255), nullable=False)
+    releaseyear = db.Column(db.Integer, nullable=False)
+    developer = db.Column(db.String(255), nullable=True)
+    publisher = db.Column(db.String(255), nullable=True)
+    mainseries = db.Column(db.String(255), nullable=True)
+    subseries = db.Column(db.String(255), nullable=True)
+    notes = db.Column(db.String(2000), nullable=True)
+    entrydate = db.Column(db.DateTime(timezone=True))
+
+    user = db.relationship('Users', backref='games')
+    platform =  db.relationship('Platforms', backref='games')
+    genres = db.relationship('Genres', secondary=genretags, backref='games')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'name': self.gamename,
+            'releaseyear': self.releaseyear,
+            'platform': self.platform.to_dict(),
+            'genres': [genre.to_dict() for genre in self.genres],
+            'developer': self.developer,
+            'publisher': self.publisher,
+            'mainseries': self.mainseries,
+            'subseries': self.subseries,
+            'notes': self.notes,
+            'entrydate': self.entrydate.isoformat()
         }

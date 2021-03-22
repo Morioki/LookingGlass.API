@@ -1,38 +1,74 @@
 schema {
   query: Query
-  mutation: Mutation
+#   mutation: Mutation
 }
 
-type Genre {
+scalar DateTime
 
+directive @isAuthorized(role: String) on FIELD_DEFINITION
+
+type Genre {
+  id: ID!
+  description: String!
+  parent: Genre
+  active: Boolean!
+}
+
+type Generation {
+  id: ID!
+  generationcode: String!
+  description: String!
 }
 
 type Platform {
-  
-}
-
-type Playthrough {
-
-}
-
-type Session {
-
-}
-
-type Game {
-
+  id: ID!
+  generation: Generation
+  platformcode: String!
+  description: String!
+  handheld: Boolean!
+  active: Boolean!
 }
 
 type User {
-
+  id: ID!
+  username: String!
+  firstname: String
+  lastname: String
+  entrydate: DateTime!
 }
 
+type Game {
+  id: ID!
+  name: String!
+  releaseyear: Int!
+  platform: Platform!
+  genres: [Genre]
+  developer: String
+  publisher: String
+  mainseries: String
+  subseries: String
+  notes: String
+  entrydate: DateTime
+}
 
 type Query {
+  generations: [Generation] 
+  generation(generationId: ID!): Generation 
 
+  platforms: [Platform]
+  platform(platformId: ID!): Platform
+
+  genres: [Genre] 
+  genre(genreId: ID!): Genre
+
+  users: [User] @isAuthorized(role: "Admin")
+  user: User @isAuthorized
+
+  games: [Game] @isAuthorized
+  game(gameId: ID!): Game @isAuthorized
 }
 
 
-type Mutation {
+# type Mutation {
 
-}
+# }
