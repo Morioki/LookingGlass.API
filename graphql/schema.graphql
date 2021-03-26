@@ -20,6 +20,18 @@ type Generation {
   description: String!
 }
 
+type PlaythroughStatus {
+  id: ID!
+  description: String!
+  active: Boolean!
+}
+
+type PlaythroughType {
+  id: ID!
+  description: String!
+  active: Boolean!
+}
+
 type Platform {
   id: ID!
   generation: Generation
@@ -57,6 +69,12 @@ type Query {
 
   platforms: [Platform]
   platform(platformId: ID!): Platform
+
+  playthroughtypes: [PlaythroughType]
+  playthroughtype(playthroughtypeId: ID!): PlaythroughType
+
+  playthroughstatuses: [PlaythroughStatus]
+  playthroughstatus(playthroughstatusId: ID!): PlaythroughStatus
 
   genres: [Genre] 
   genre(genreId: ID!): Genre

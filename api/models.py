@@ -1,3 +1,4 @@
+from os import access
 from sqlalchemy.orm import backref
 from main import db
 
@@ -53,6 +54,38 @@ class PlatformGenerations(db.Model):
             "id": self.id,
             "generationcode": self.generationcode,
             "description": self.description
+        }
+
+
+class PlaythroughStatuses(db.Model):
+    __tablename__ = 'playthroughstatus'
+    __table_args__ = {'schema': 'lg'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(100), nullable=False)
+    active = db.Column(db.Boolean, nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'description': self.description,
+            'active': self.active
+        }
+
+
+class PlaythroughTypes(db.Model):
+    __tablename__ = 'playthroughtypes'
+    __table_args__ = {'schema': 'lg'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    description = db.Column(db.String(100), nullable=False)
+    active = db.Column(db.Boolean, nullable=False)
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'description': self.description,
+            'active': self.active
         }
 
 

@@ -8,7 +8,8 @@ from ariadne import load_schema_from_path, make_executable_schema, \
 from ariadne.contrib.tracing.apollotracing import ApolloTracingExtensionSync
 from ariadne.constants import PLAYGROUND_HTML
 from flask import request, jsonify
-from api.queries import generation, platform, genre, user, game
+from api.queries import generation, platform, genre, user, game, playthroughtype, \
+    playthroughstatus
 from api.helpers import get_user_context, IsAuthorizedDirective
     
 # from api.mutations import resolve_create_todo, resolve_mark_done, resolve_delete_todo, resolve_update_due_date
@@ -30,6 +31,12 @@ query.set_field('user', user.resolve_user)
 
 query.set_field('games', game.resolve_games)
 query.set_field('game', game.resolve_game)
+
+query.set_field('playthroughtypes', playthroughtype.resolve_playthroughtypes)
+query.set_field('playthroughtype', playthroughtype.resolve_playthroughtype)
+
+query.set_field('playthroughstatuses', playthroughstatus.resolve_playthroughstatuses)
+query.set_field('playthroughstatus', playthroughstatus.resolve_playthroughstatus)
 
 # mutation.set_field("createTodo", resolve_create_todo)
 # mutation.set_field("markDone", resolve_mark_done)
