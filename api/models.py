@@ -176,3 +176,62 @@ class Games(db.Model):
             'notes': self.notes,
             'entrydate': self.entrydate.isoformat()
         }
+
+class Playthroughs(db.Model):
+    __tablename__ = 'playthroughs'
+    __table_args__ = {'schema': 'lg'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id', onupdate='CASCADE', ondelete='CASCADE'))
+    gameid = db.Column(db.Integer, db.ForeignKey('lg.games.id', onupdate='CASCADE', ondelete='CASCADE'))
+    typeid = db.Column(db.Integer, db.ForeignKey('lg.playthroughtypes.id', onupdate='CASCADE'))
+    statusid = db.Column(db.Integer, db.ForeignKey('lg.playthroughstatus.id', onupdate='CASCADE'))
+    notes = db.Column(db.String(2000), nullable=True)
+    entrydate = db.Column(db.DateTime(timezone=True))
+
+    user = db.relationship('Users', backref='playthroughs')
+    game = db.relationship('Games', backref='playthroughs')
+    type = db.relationship('PlaythroughTypes', backref='playthroughs')
+    status = db.relationship('PlaythroughStatuses', backref='playthroughs')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'game': self.game.to_dict(),
+            'type': self.type.to_dict(),
+            'status': self.status.to_dict(),
+            'notes': self.notes,
+            'entrydate': self.entrydate.isoformat()
+        }
+
+class Sessions(db.Model):
+    __tablename__ = 'sessions'
+    __table_args__ = {'schema': 'lg'}
+
+    id = db.Column(db.Integer, primary_key=True)
+    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id', onupdate='CASCADE', ondelete='CASCADE'))
+    gameid = db.Column(db.Integer, db.ForeignKey('lg.games.id', onupdate='CASCADE', ondelete='CASCADE'))
+    playthroughid = db.Column(db.Integer, db.ForeignKey('lg.playthroughs.id', onupdate='CASCADE', ondelete='CASCADE'))
+    startdate = db.Column(db.DateTime(timezone=True))
+    stopwatchhours = db.Column(db.Integer)
+    stopwatchminutes = db.Column(db.Integer)
+    stopwatchseconds = db.Column(db.Integer)
+    stopwatchmilliseconds = db.Column(db.Integer)
+    entrydate = db.Column(db.DateTime(timezone=True))
+
+    user = db.relationship('Users', backref='sessions')
+    game = db.relationship('Games', backref='sessions')
+    playthrough = db.relationship('Playthroughs', backref='sessions')
+
+    def to_dict(self):
+        return {
+            'id': self.id,
+            'game': self.game.to_dict(),
+            'playthrough': self.playthrough.to_dict(),
+            'startdate': self.startdate.isoformat(),
+            'swhours': self.stopwatchhours,
+            'swminutes': self.stopwatchminutes,
+            'swseconds': self.stopwatchseconds,
+            'swmilliseconds': self.stopwatchmilliseconds,
+            'entrydate': self.entrydate.isoformat()
+        }

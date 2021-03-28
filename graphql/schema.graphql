@@ -63,6 +63,27 @@ type Game {
   entrydate: DateTime
 }
 
+type Playthrough {
+  id: ID!
+  game: Game!
+  type: PlaythroughType!
+  status: PlaythroughStatus!
+  notes: String
+  entrydate: DateTime
+}
+
+type Session {
+  id: ID!
+  game: Game!
+  playthrough: Playthrough!
+  startdate: DateTime!
+  swhours: Int!
+  swminutes: Int!
+  swseconds: Int!
+  swmilliseconds: Int!
+  entrydate: DateTime!
+}
+
 type Query {
   generations: [Generation] 
   generation(generationId: ID!): Generation 
@@ -84,6 +105,12 @@ type Query {
 
   games: [Game] @isAuthorized
   game(gameId: ID!): Game @isAuthorized
+
+  playthroughs(gameId: Int): [Playthrough] @isAuthorized
+  playthrough(playthroughId: ID!): Playthrough @isAuthorized
+
+  sessions(playthroughId: Int, gameId: Int): [Session] @isAuthorized
+  session(sessionId: ID!): Session @isAuthorized
 }
 
 
