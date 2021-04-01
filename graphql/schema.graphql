@@ -122,5 +122,5 @@ type Query {
 
 
 type Mutation {
-  playthroughstatusSetActive(playthroughstatusId: ID!, active: Boolean!): Result @isAuthorized(role: "Admin")
+  updatePlaythroughStatus(playthroughstatusId: ID!, description: String, active: Boolean): Result @isAuthorized(role: "Admin")
 }

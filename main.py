@@ -45,7 +45,7 @@ query.set_field('playthrough', playthrough.resolve_playthrough)
 query.set_field('sessions', session.resolve_sessions)
 query.set_field('session', session.resolve_session)
 
-mutation.set_field('playthroughstatusSetActive', playthroughstatus.resolve_set_active)
+mutation.set_field('updatePlaythroughStatus', playthroughstatus.resolve_update_playthroughstatus)
 
 # mutation.set_field("createTodo", resolve_create_todo)
 # mutation.set_field("markDone", resolve_mark_done)

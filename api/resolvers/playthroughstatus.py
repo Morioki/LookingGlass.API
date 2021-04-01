@@ -30,19 +30,53 @@ def resolve_playthroughstatus(obj, info, playthroughstatus_id):
 
 
 #* Mutations
+# @convert_kwargs_to_snake_case
+# def resolve_set_active(obj, info, playthroughstatus_id, active):
+#     print("In mutation resolver!")
+#     try:
+#         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
+#         playthroughstatus.active = bool(active)
+#         db.session.commit()
+
+#         payload = {
+#             'success': True,
+#             'field': 'PlaythroughStatus',
+#             'id': playthroughstatus.id
+#         }
+#     except AttributeError:
+#         payload = {
+#             'success': False,
+#             'errors': [f'Playthrough Stauts item matching id {playthroughstatus_id} not found']
+#         }
+
+#     return payload
+
 @convert_kwargs_to_snake_case
-def resolve_set_active(obj, info, playthroughstatus_id, active):
+def resolve_update_playthroughstatus(obj, info, playthroughstatus_id, description=None, active=None):
     print("In mutation resolver!")
     try:
         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
-        playthroughstatus.active = bool(active)
-        db.session.commit()
+        recordChanged = False
+        if description is not None and playthroughstatus.description != description:
+            playthroughstatus.description = description
+            recordChanged = True
+        if active is not None and playthroughstatus.active != bool(active):
+            playthroughstatus.active = bool(active)
+            recordChanged = True
+        
+        if recordChanged:
+            db.session.commit()
 
-        payload = {
-            'success': True,
-            'field': 'PlaythroughStatus',
-            'id': playthroughstatus.id
-        }
+            payload = {
+                'success': True,
+                'field': 'PlaythroughStatus',
+                'id': playthroughstatus.id
+            }
+        else: # TODO Convert to new excption type?
+            payload = {
+                'success': False,
+                'errors': [f'No values to change']
+            }
     except AttributeError:
         payload = {
             'success': False,
