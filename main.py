@@ -8,8 +8,9 @@ from ariadne import load_schema_from_path, make_executable_schema, \
 from ariadne.contrib.tracing.apollotracing import ApolloTracingExtensionSync
 from ariadne.constants import PLAYGROUND_HTML
 from flask import request, jsonify
-from api.queries import generation, platform, genre, user, game, playthroughtype, \
+from api.resolvers import generation, platform, genre, user, game, playthroughtype, \
     playthroughstatus, playthrough, session
+# from api.mutations import pl
 from api.helpers import get_user_context, IsAuthorizedDirective
     
 # from api.mutations import resolve_create_todo, resolve_mark_done, resolve_delete_todo, resolve_update_due_date
@@ -44,6 +45,8 @@ query.set_field('playthrough', playthrough.resolve_playthrough)
 query.set_field('sessions', session.resolve_sessions)
 query.set_field('session', session.resolve_session)
 
+mutation.set_field('playthroughstatusSetActive', playthroughstatus.resolve_set_active)
+
 # mutation.set_field("createTodo", resolve_create_todo)
 # mutation.set_field("markDone", resolve_mark_done)
 # mutation.set_field("deleteTodo", resolve_delete_todo)
@@ -55,7 +58,7 @@ query.set_field('session', session.resolve_session)
 # )
 type_defs = load_schema_from_path("./graphql/schema.graphql")
 schema = make_executable_schema(
-    type_defs, query, snake_case_fallback_resolvers, directives= {
+    type_defs, query, mutation, snake_case_fallback_resolvers, directives= {
             'isAuthorized':IsAuthorizedDirective
         }
 )

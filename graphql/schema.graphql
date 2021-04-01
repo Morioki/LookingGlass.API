@@ -1,6 +1,6 @@
 schema {
   query: Query
-#   mutation: Mutation
+  mutation: Mutation
 }
 
 scalar DateTime
@@ -84,6 +84,13 @@ type Session {
   entrydate: DateTime!
 }
 
+type Result {
+  success: Boolean!
+  errors: [String]
+  field: String
+  id: ID
+}
+
 type Query {
   generations: [Generation] 
   generation(generationId: ID!): Generation 
@@ -114,6 +121,6 @@ type Query {
 }
 
 
-# type Mutation {
-
-# }
+type Mutation {
+  playthroughstatusSetActive(playthroughstatusId: ID!, active: Boolean!): Result @isAuthorized(role: "Admin")
+}
