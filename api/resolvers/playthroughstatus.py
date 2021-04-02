@@ -1,5 +1,6 @@
 from api.base import db
 from api.models import PlaythroughStatuses
+from api.helpers import NoChangeError
 from ariadne import convert_kwargs_to_snake_case
 
 
@@ -22,7 +23,7 @@ def resolve_playthroughstatus(obj, info, playthroughstatus_id):
     except AttributeError:
         payload = {
             'id': -1,
-            'description': f"Playthrough Stauts item matching id {playthroughstatus_id} not found",
+            'description': f"Playthrough Status item matching id {playthroughstatus_id} not found",
             'active': False
         }
 
@@ -30,30 +31,29 @@ def resolve_playthroughstatus(obj, info, playthroughstatus_id):
 
 
 #* Mutations
-# @convert_kwargs_to_snake_case
-# def resolve_set_active(obj, info, playthroughstatus_id, active):
-#     print("In mutation resolver!")
-#     try:
-#         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
-#         playthroughstatus.active = bool(active)
-#         db.session.commit()
-
-#         payload = {
-#             'success': True,
-#             'field': 'PlaythroughStatus',
-#             'id': playthroughstatus.id
-#         }
-#     except AttributeError:
-#         payload = {
-#             'success': False,
-#             'errors': [f'Playthrough Stauts item matching id {playthroughstatus_id} not found']
-#         }
-
-#     return payload
+@convert_kwargs_to_snake_case
+def resolve_insert_playthroughstatus(obj, info, description, active):
+    print("In insert resolver")
+    try:
+        playthroughstatus = PlaythroughStatuses(description=description, active=active)
+        db.session.add(playthroughstatus)
+        db.session.commit()
+        
+        payload = {
+            'success': True,
+            'field': 'PlaythroughStatus',
+            'id': playthroughstatus.id
+        }
+    except Exception as er:
+        payload = {
+            'success': False,
+            'errors': [er]
+        }
+        
+    return payload
 
 @convert_kwargs_to_snake_case
 def resolve_update_playthroughstatus(obj, info, playthroughstatus_id, description=None, active=None):
-    print("In mutation resolver!")
     try:
         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
         recordChanged = False
@@ -72,15 +72,17 @@ def resolve_update_playthroughstatus(obj, info, playthroughstatus_id, descriptio
                 'field': 'PlaythroughStatus',
                 'id': playthroughstatus.id
             }
-        else: # TODO Convert to new excption type?
-            payload = {
-                'success': False,
-                'errors': [f'No values to change']
-            }
+        else:
+            raise NoChangeError
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Playthrough Stauts item matching id {playthroughstatus_id} not found']
+            'errors': [f'Playthrough Status item matching id {playthroughstatus_id} not found']
         }
+    except NoChangeError:
+        payload = {
+                'success': False,
+                'errors': [f'No values to change']
+            }
 
     return payload

@@ -45,17 +45,12 @@ query.set_field('playthrough', playthrough.resolve_playthrough)
 query.set_field('sessions', session.resolve_sessions)
 query.set_field('session', session.resolve_session)
 
+mutation.set_field('insertPlaythroughStatus', playthroughstatus.resolve_insert_playthroughstatus)
 mutation.set_field('updatePlaythroughStatus', playthroughstatus.resolve_update_playthroughstatus)
 
-# mutation.set_field("createTodo", resolve_create_todo)
-# mutation.set_field("markDone", resolve_mark_done)
-# mutation.set_field("deleteTodo", resolve_delete_todo)
-# mutation.set_field("updateDueDate", resolve_update_due_date)
+mutation.set_field('insertPlaythroughType', playthroughtype.resolve_insert_playthroughtype)
+mutation.set_field('updatePlaythroughType', playthroughtype.resolve_update_playthroughtype)
 
-# type_defs = load_schema_from_path("./graphql/sampleSchema.graphql")
-# schema = make_executable_schema(
-#     type_defs, query, mutation, snake_case_fallback_resolvers
-# )
 type_defs = load_schema_from_path("./graphql/schema.graphql")
 schema = make_executable_schema(
     type_defs, query, mutation, snake_case_fallback_resolvers, directives= {

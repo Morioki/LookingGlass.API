@@ -19,7 +19,6 @@ def get_user_context(request):
     return context
 
     
-
 class IsAuthorizedDirective(SchemaDirectiveVisitor):
    
     def visit_field_definition(self, field, object_type):
@@ -44,3 +43,13 @@ class IsAuthorizedDirective(SchemaDirectiveVisitor):
         
         field.resolve = resolve_is_authorized
         return field
+
+
+class NoChangeError(Exception):
+
+    def __init__(self, message='Requested update would have no effect') -> None:
+        self.message = message
+        super().__init__(self.message)
+
+    def __str__(self) -> str:
+        return self.message
