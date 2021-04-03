@@ -34,7 +34,7 @@ type PlaythroughType {
 
 type Platform {
   id: ID!
-  generation: Generation
+  generation: Generation!
   platformcode: String!
   description: String!
   handheld: Boolean!
@@ -131,5 +131,9 @@ type Mutation {
   insertGeneration(generationcode: String!, description: String!): Result @isAuthorized(role: "Admin")
   updateGeneration(generationId: ID!, generationcode: String, description: String): Result @isAuthorized(role: "Admin")
 
-  # insert 
+  insertPlatform(generationId: ID!, platformcode: String!, description: String!, handheld: Boolean!, active: Boolean!): Result @isAuthorized(role: "Admin")
+  updatePlatform(platformId: ID!, generationId: ID, platformcode: String, description: String, handheld: Boolean, active: Boolean): Result @isAuthorized(role: "Admin")
+
+  insertGenre(description: String!, parentId: ID!, active: Boolean!): Result @isAuthorized(role: "Admin")
+  updateGenre(genreId: ID!, description: String, parentId: ID, active: Boolean): Result @isAuthorized(role: "Admin")
 }
