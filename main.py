@@ -51,6 +51,9 @@ mutation.set_field('updatePlaythroughStatus', playthroughstatus.resolve_update_p
 mutation.set_field('insertPlaythroughType', playthroughtype.resolve_insert_playthroughtype)
 mutation.set_field('updatePlaythroughType', playthroughtype.resolve_update_playthroughtype)
 
+mutation.set_field('insertGeneration', generation.resolve_insert_generation)
+mutation.set_field('updateGeneration', generation.resolve_update_generation)
+
 type_defs = load_schema_from_path("./graphql/schema.graphql")
 schema = make_executable_schema(
     type_defs, query, mutation, snake_case_fallback_resolvers, directives= {
