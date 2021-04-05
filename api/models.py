@@ -16,6 +16,13 @@ genretags = db.Table('genretags',
     schema='lg'
 )
 
+gameplatforms = db.Table('gameplatforms',
+    db.Column('id', db.Integer, primary_key=True),
+    db.Column('gameid', db.Integer, db.ForeignKey('lg.games.id')),
+    db.Column('platformid', db.Integer, db.ForeignKey('lg.platforms.id')),
+    schema='lg'
+)
+
 class Platforms(db.Model):
     __tablename__ = 'platforms'
     __table_args__ = {"schema": "lg"}
@@ -148,7 +155,7 @@ class Games(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     userid = db.Column(db.Integer, db.ForeignKey('lg.users.id', onupdate='CASCADE', ondelete='CASCADE'))
-    platformid = db.Column(db.Integer, db.ForeignKey('lg.platforms.id', onupdate='CASCADE'))
+    # platformid = db.Column(db.Integer, db.ForeignKey('lg.platforms.id', onupdate='CASCADE'))
     gamename = db.Column(db.String(255), nullable=False)
     releaseyear = db.Column(db.Integer, nullable=False)
     developer = db.Column(db.String(255), nullable=True)
@@ -159,7 +166,8 @@ class Games(db.Model):
     entrydate = db.Column(db.DateTime(timezone=True))
 
     user = db.relationship('Users', backref='games')
-    platform =  db.relationship('Platforms', backref='games')
+    # platform =  db.relationship('Platforms', backref='games')
+    platforms = db.relationship('Platforms', secondary=gameplatforms, backref='games')
     genres = db.relationship('Genres', secondary=genretags, backref='games')
 
     def to_dict(self):
@@ -167,7 +175,8 @@ class Games(db.Model):
             'id': self.id,
             'name': self.gamename,
             'releaseyear': self.releaseyear,
-            'platform': self.platform.to_dict(),
+            # 'platform': self.platform.to_dict(),
+            'platforms': [platform.to_dict() for platform in self.platforms],
             'genres': [genre.to_dict() for genre in self.genres],
             'developer': self.developer,
             'publisher': self.publisher,

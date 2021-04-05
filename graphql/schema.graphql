@@ -53,7 +53,7 @@ type Game {
   id: ID!
   name: String!
   releaseyear: Int!
-  platform: Platform!
+  platforms: [Platform]!
   genres: [Genre]
   developer: String
   publisher: String
