@@ -134,6 +134,6 @@ type Mutation {
   insertPlatform(generationId: ID!, platformcode: String!, description: String!, handheld: Boolean!, active: Boolean!): Result @isAuthorized(role: "Admin")
   updatePlatform(platformId: ID!, generationId: ID, platformcode: String, description: String, handheld: Boolean, active: Boolean): Result @isAuthorized(role: "Admin")
 
-  insertGenre(description: String!, parentId: ID!, active: Boolean!): Result @isAuthorized(role: "Admin")
+  insertGenre(description: String!, parentId: ID, active: Boolean!): Result @isAuthorized(role: "Admin")
   updateGenre(genreId: ID!, description: String, parentId: ID, active: Boolean): Result @isAuthorized(role: "Admin")
 }

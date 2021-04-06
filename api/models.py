@@ -102,7 +102,7 @@ class Genres(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
-    parentid = db.Column(db.Integer, db.ForeignKey('lg.genres.id', onupdate='CASCADE'))
+    parentid = db.Column(db.Integer, db.ForeignKey('lg.genres.id', onupdate='CASCADE'), nullable=True)
     active = db.Column(db.Boolean, nullable=False)
 
     parent = db.relationship('Genres', remote_side=[id])
