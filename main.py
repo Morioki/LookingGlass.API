@@ -50,6 +50,7 @@ mutation.set_field('updatePlaythroughStatus', playthroughstatus.resolve_update_p
 
 mutation.set_field('insertPlaythroughType', playthroughtype.resolve_insert_playthroughtype)
 mutation.set_field('updatePlaythroughType', playthroughtype.resolve_update_playthroughtype)
+mutation.set_field('deletePlaythroughType', playthroughtype.resolve_delete_playthroughtype)
 
 mutation.set_field('insertGeneration', generation.resolve_insert_generation)
 mutation.set_field('updateGeneration', generation.resolve_update_generation)

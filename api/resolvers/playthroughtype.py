@@ -45,7 +45,8 @@ def resolve_insert_playthroughtype(obj, info, description, active):
     except Exception as er:
         payload = {
             'success': False,
-            'errors': [er]
+            'errors': [er],
+            'field': 'PlaythroughTypes'
         }
         
     return payload
@@ -55,6 +56,9 @@ def resolve_update_playthroughtype(obj, info, playthroughtype_id, description=No
     try:
         playthroughtype = PlaythroughTypes.query.get(playthroughtype_id)
         recordChanged = False
+
+        if playthroughtype is None:
+            raise AttributeError
         if description is not None and playthroughtype.description != description:
             playthroughtype.description = description
             recordChanged = True
@@ -75,12 +79,37 @@ def resolve_update_playthroughtype(obj, info, playthroughtype_id, description=No
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Playthrough Type item matching id {playthroughtype_id} not found']
+            'errors': [f'Playthrough Type item matching id {playthroughtype_id} not found'],
+            'field': 'PlaythroughTypes'
         }
     except NoChangeError:
         payload = {
                 'success': False,
-                'errors': [f'No values to change']
+                'errors': [f'No values to change'],
+                'field': 'PlaythroughTypes'
             }
+
+    return payload
+
+@convert_kwargs_to_snake_case
+def resolve_delete_playthroughtype(obj, info, playthroughtype_id):
+    try:
+        playthroughType = PlaythroughTypes.query.get(playthroughtype_id)
+        # TODO Find better error when record does not exist
+        if playthroughType is None:
+            raise AttributeError
+        db.session.delete(playthroughType)
+        db.session.commit()
+    
+        payload = {
+            'success': True,
+            'field': 'PlaythroughTypes'
+        }
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Playthrough Type item matching id {playthroughtype_id} not found'],
+            'field': 'PlaythroughTypes'
+        }
 
     return payload

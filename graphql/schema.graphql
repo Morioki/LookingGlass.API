@@ -127,6 +127,7 @@ type Mutation {
 
   insertPlaythroughType(description: String!, active: Boolean!): Result @isAuthorized(role: "Admin")
   updatePlaythroughType(playthroughtypeId: ID!, description: String, active: Boolean): Result @isAuthorized(role: "Admin")
+  deletePlaythroughType(playthroughtypeId: ID!): Result @isAuthorized(role: "Admin")
 
   insertGeneration(generationcode: String!, description: String!): Result @isAuthorized(role: "Admin")
   updateGeneration(generationId: ID!, generationcode: String, description: String): Result @isAuthorized(role: "Admin")
