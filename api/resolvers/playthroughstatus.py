@@ -57,6 +57,9 @@ def resolve_update_playthroughstatus(obj, info, playthroughstatus_id, descriptio
     try:
         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
         recordChanged = False
+
+        if playthroughstatus is None:
+            raise AttributeError        
         if description is not None and playthroughstatus.description != description:
             playthroughstatus.description = description
             recordChanged = True
@@ -84,5 +87,28 @@ def resolve_update_playthroughstatus(obj, info, playthroughstatus_id, descriptio
                 'success': False,
                 'errors': [f'No values to change']
             }
+
+    return payload
+
+@convert_kwargs_to_snake_case
+def resolve_delete_playthroughstatus(obj, info, playthroughstatus_id):
+    try:
+        playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
+        # TODO Find better error when record does not exist
+        if playthroughstatus is None:
+            raise AttributeError
+        db.session.delete(playthroughstatus)
+        db.session.commit()
+    
+        payload = {
+            'success': True,
+            'field': 'PlaythroughStatuses'
+        }
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Playthrough Status item matching id {playthroughstatus_id} not found'],
+            'field': 'PlaythroughStatuses'
+        }
 
     return payload

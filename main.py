@@ -47,6 +47,7 @@ query.set_field('session', session.resolve_session)
 
 mutation.set_field('insertPlaythroughStatus', playthroughstatus.resolve_insert_playthroughstatus)
 mutation.set_field('updatePlaythroughStatus', playthroughstatus.resolve_update_playthroughstatus)
+mutation.set_field('deletePlaythroughStatus',playthroughstatus.resolve_delete_playthroughstatus)
 
 mutation.set_field('insertPlaythroughType', playthroughtype.resolve_insert_playthroughtype)
 mutation.set_field('updatePlaythroughType', playthroughtype.resolve_update_playthroughtype)

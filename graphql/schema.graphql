@@ -124,6 +124,7 @@ type Query {
 type Mutation {
   insertPlaythroughStatus(description: String!, active: Boolean!): Result @isAuthorized(role: "Admin")
   updatePlaythroughStatus(playthroughstatusId: ID!, description: String, active: Boolean): Result @isAuthorized(role: "Admin")
+  deletePlaythroughStatus(playthroughstatusId: ID!): Result @isAuthorized(role: "Admin")
 
   insertPlaythroughType(description: String!, active: Boolean!): Result @isAuthorized(role: "Admin")
   updatePlaythroughType(playthroughtypeId: ID!, description: String, active: Boolean): Result @isAuthorized(role: "Admin")
