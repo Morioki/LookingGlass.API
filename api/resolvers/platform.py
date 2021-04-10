@@ -93,3 +93,26 @@ def resolve_update_platform(obj, info, platform_id, generation_id=None,
         }
     
     return payload
+
+@convert_kwargs_to_snake_case
+def resolve_delete_platform(obj, info, platform_id):
+    try:
+        platform = Platforms.query.get(platform_id)
+        # TODO Find better error when record does not exist
+        if platform is None:
+            raise AttributeError
+        db.session.delete(platform)
+        db.session.commit()
+    
+        payload = {
+            'success': True,
+            'field': 'Platforms'
+        }
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Platforms item matching id {platform_id} not found'],
+            'field': 'Platforms'
+        }
+
+    return payload

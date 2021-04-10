@@ -85,3 +85,26 @@ def resolve_update_genres(obj, info, genre_id, description=None, parent_id=None,
         }
     
     return payload
+
+@convert_kwargs_to_snake_case
+def resolve_delete_genre(obj, info, genre_id):
+    try:
+        genre = Genres.query.get(genre_id)
+        # TODO Find better error when record does not exist
+        if genre is None:
+            raise AttributeError
+        db.session.delete(genre)
+        db.session.commit()
+    
+        payload = {
+            'success': True,
+            'field': 'Genres'
+        }
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Genres item matching id {genre_id} not found'],
+            'field': 'Genres'
+        }
+
+    return payload

@@ -86,3 +86,27 @@ def resolve_update_generation(obj, info, generation_id, generationcode=None, des
         }
 
     return payload
+
+@convert_kwargs_to_snake_case
+def resolve_delete_generation(obj, info, generation_id):
+    try:
+        generation = PlatformGenerations.query.get(generation_id)
+        # TODO Find better error when record does not exist
+        if generation is None:
+            raise AttributeError
+        db.session.delete(generation)
+        db.session.commit()
+    
+        payload = {
+            'success': True,
+            'field': 'PlatformGenerations'
+        }
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Platform Generations item matching id {generation_id} not found'],
+            'field': 'PlatformGenerations'
+        }
+
+    return payload
+

@@ -55,12 +55,15 @@ mutation.set_field('deletePlaythroughType', playthroughtype.resolve_delete_playt
 
 mutation.set_field('insertGeneration', generation.resolve_insert_generation)
 mutation.set_field('updateGeneration', generation.resolve_update_generation)
+mutation.set_field('deleteGeneration', generation.resolve_delete_generation)
 
 mutation.set_field('insertPlatform', platform.resolve_insert_platform)
 mutation.set_field('updatePlatform', platform.resolve_update_platform)
+mutation.set_field('deletePlatform', platform.resolve_delete_platform)
 
 mutation.set_field('insertGenre', genre.resolve_insert_genres)
 mutation.set_field('updateGenre', genre.resolve_update_genres)
+mutation.set_field('deleteGenre', genre.resolve_delete_genre)
 
 
 type_defs = load_schema_from_path("./graphql/schema.graphql")
