@@ -154,4 +154,9 @@ type Mutation {
   insertSession(gameId: ID!, playthroughId: ID!, startdate: DateTime!, swhours: Int!, swminutes: Int!, swseconds: Int!, swmilliseconds: Int!): Result @isAuthorized
   updateSession(sessionId: ID!, gameId: ID, playthroughId: ID, startdate: DateTime, swhours: Int, swminutes: Int, swseconds: Int, swmilliseconds: Int): Result @isAuthorized
   deleteSession(sessionId: ID!): Result @isAuthorized
+
+  appendGenreToGame(gameId: ID!, genreId: ID!): Result @isAuthorized
+  removeGenreFromGame(gameId: ID!, genreId: ID!): Result @isAuthorized
+  appendPlatformToGame(gameId: ID!, platformId: ID!): Result @isAuthorized
+  removePlatformFromGame(gameId: ID!, platformId: ID!): Result @isAuthorized
 }

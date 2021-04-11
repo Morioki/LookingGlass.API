@@ -1,5 +1,5 @@
 from api.base import db
-from api.models import Games
+from api.models import Games, Genres, Platforms
 from api.helpers import NoChangeError
 from ariadne import convert_kwargs_to_snake_case
 
@@ -125,4 +125,114 @@ def resolve_delete_game(obj, info, game_id):
             'field': 'Games'
         }
 
+    return payload
+
+@convert_kwargs_to_snake_case
+def resolve_append_genre_game(obj, info, game_id, genre_id):
+    try:
+        game = Games.query.get(game_id)
+        genre = Genres.query.get(genre_id)
+        
+        if game is None or genre is None:
+            raise AttributeError
+
+        game.genres.append(genre)
+        
+        db.session.commit()
+
+        payload = {
+            'success': True,
+            'field': 'Games',
+            'id': game.id
+        }
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Invalid parameters, please review and try again'],
+            'field': 'Games'
+        }
+    
+    return payload
+
+@convert_kwargs_to_snake_case
+def resolve_remove_genre_game(obj, info, game_id, genre_id):
+    try:
+        game = Games.query.get(game_id)
+        genre = Genres.query.get(genre_id)
+
+        # TODO Handle if platform doesn't exist
+        game.genres.remove(genre)
+
+        db.session.commit()
+
+        payload = {
+            'success': True,
+            'field': 'Games',
+            'id': game.id
+        }
+
+    except AttributeError:
+        payload = {
+            'success': False,
+            'errors': [f'Invalid parameters, please review and try again'],
+            'field': 'Games'
+        }
+    
+    return payload
+
+@convert_kwargs_to_snake_case
+def resolve_append_platform_game(obj, info, game_id, platform_id):
+    try:
+        game = Games.query.get(game_id)
+        platform = Platforms.query.get(platform_id)
+        
+        if game is None or platform is None:
+            raise AttributeError
+
+        game.platforms.append(platform)
+        
+        db.session.commit()
+
+        payload = {
+            'success': True,
+            'field': 'Games',
+            'id': game.id
+        }
+    except AttributeError as er:
+        print(er)
+        payload = {
+            'success': False,
+            'errors': [f'Invalid parameters, please review and try again'],
+            'field': 'Games'
+        }
+    
+    return payload
+
+@convert_kwargs_to_snake_case
+def resolve_remove_platform_game(obj, info, game_id, platform_id):
+    try:
+        game = Games.query.get(game_id)
+        platform = Platforms.query.get(platform_id)
+        
+        if game is None or platform is None:
+            raise AttributeError
+
+        # TODO Handle if platform doesn't exist
+        game.platforms.remove(platform)
+        
+        db.session.commit()
+
+        payload = {
+            'success': True,
+            'field': 'Games',
+            'id': game.id
+        }
+    except AttributeError as er:
+        print(er)
+        payload = {
+            'success': False,
+            'errors': [f'Invalid parameters, please review and try again'],
+            'field': 'Games'
+        }
+    
     return payload

@@ -77,6 +77,11 @@ mutation.set_field('insertSession', session.resolve_insert_session)
 mutation.set_field('updateSession', session.resolve_update_session)
 mutation.set_field('deleteSession', session.resolve_delete_session)
 
+mutation.set_field('appendGenreToGame', game.resolve_append_genre_game)
+mutation.set_field('removeGenreFromGame', game.resolve_remove_genre_game)
+mutation.set_field('appendPlatformToGame', game.resolve_append_platform_game)
+mutation.set_field('removePlatformFromGame', game.resolve_remove_platform_game)
+
 
 type_defs = load_schema_from_path("./graphql/schema.graphql")
 schema = make_executable_schema(
