@@ -145,4 +145,8 @@ type Mutation {
   insertGame(name: String!, releaseYear: Int!, developer: String, publisher: String, mainseries: String, subseries: String, notes: String): Result @isAuthorized
   updateGame(gameId: ID!, name: String, releaseYear: Int, developer: String, publisher: String, mainseries: String, subseries: String, notes: String): Result @isAuthorized
   deleteGame(gameId: ID!): Result @isAuthorized
+
+  insertPlaythrough(gameId: ID!, typeId: ID!, statusId: ID!, notes: String): Result @isAuthorized
+  updatePlaythrough(playthroughId: ID!, gameId: ID, typeId: ID, statusId: ID, notes: String): Result @isAuthorized
+  deletePlaythrough(playthroughId: ID!): Result @isAuthorized
 }
