@@ -1,0 +1,162 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+scalar DateTime
+
+directive @isAuthorized(role: String) on FIELD_DEFINITION
+
+type Genre {
+  id: ID!
+  description: String!
+  parent: Genre
+  active: Boolean!
+}
+
+type Generation {
+  id: ID!
+  generationcode: String!
+  description: String!
+}
+
+type PlaythroughStatus {
+  id: ID!
+  description: String!
+  active: Boolean!
+}
+
+type PlaythroughType {
+  id: ID!
+  description: String!
+  active: Boolean!
+}
+
+type Platform {
+  id: ID!
+  generation: Generation!
+  platformcode: String!
+  description: String!
+  handheld: Boolean!
+  active: Boolean!
+}
+
+type User {
+  id: ID!
+  username: String!
+  firstname: String
+  lastname: String
+  entrydate: DateTime!
+}
+
+type Game {
+  id: ID!
+  name: String!
+  releaseyear: Int!
+  platforms: [Platform]!
+  genres: [Genre]
+  developer: String
+  publisher: String
+  mainseries: String
+  subseries: String
+  notes: String
+  entrydate: DateTime
+}
+
+type Playthrough {
+  id: ID!
+  game: Game!
+  type: PlaythroughType!
+  status: PlaythroughStatus!
+  notes: String
+  entrydate: DateTime
+}
+
+type Session {
+  id: ID!
+  game: Game!
+  playthrough: Playthrough!
+  startdate: DateTime!
+  swhours: Int!
+  swminutes: Int!
+  swseconds: Int!
+  swmilliseconds: Int!
+  notes: String
+  entrydate: DateTime!
+}
+
+type Result {
+  success: Boolean!
+  errors: [String]
+  field: String
+  id: ID
+}
+
+type Query {
+  generations: [Generation] 
+  generation(generationId: ID!): Generation 
+
+  platforms: [Platform]
+  platform(platformId: ID!): Platform
+
+  playthroughtypes: [PlaythroughType]
+  playthroughtype(playthroughtypeId: ID!): PlaythroughType
+
+  playthroughstatuses: [PlaythroughStatus]
+  playthroughstatus(playthroughstatusId: ID!): PlaythroughStatus
+
+  genres: [Genre] 
+  genre(genreId: ID!): Genre
+
+  users: [User] @isAuthorized(role: "Admin")
+  user: User @isAuthorized
+
+  games: [Game] @isAuthorized
+  game(gameId: ID!): Game @isAuthorized
+
+  playthroughs(gameId: Int): [Playthrough] @isAuthorized
+  playthrough(playthroughId: ID!): Playthrough @isAuthorized
+
+  sessions(playthroughId: Int, gameId: Int): [Session] @isAuthorized
+  session(sessionId: ID!): Session @isAuthorized
+}
+
+
+type Mutation {
+  insertPlaythroughStatus(description: String!, active: Boolean!): Result @isAuthorized(role: "Admin")
+  updatePlaythroughStatus(playthroughstatusId: ID!, description: String, active: Boolean): Result @isAuthorized(role: "Admin")
+  deletePlaythroughStatus(playthroughstatusId: ID!): Result @isAuthorized(role: "Admin")
+
+  insertPlaythroughType(description: String!, active: Boolean!): Result @isAuthorized(role: "Admin")
+  updatePlaythroughType(playthroughtypeId: ID!, description: String, active: Boolean): Result @isAuthorized(role: "Admin")
+  deletePlaythroughType(playthroughtypeId: ID!): Result @isAuthorized(role: "Admin")
+
+  insertGeneration(generationcode: String!, description: String!): Result @isAuthorized(role: "Admin")
+  updateGeneration(generationId: ID!, generationcode: String, description: String): Result @isAuthorized(role: "Admin")
+  deleteGeneration(generationId: ID!): Result @isAuthorized(role: "Admin")
+
+  insertPlatform(generationId: ID!, platformcode: String!, description: String!, handheld: Boolean!, active: Boolean!): Result @isAuthorized(role: "Admin")
+  updatePlatform(platformId: ID!, generationId: ID, platformcode: String, description: String, handheld: Boolean, active: Boolean): Result @isAuthorized(role: "Admin")
+  deletePlatform(platformId: ID!): Result @isAuthorized(role: "Admin")
+
+  insertGenre(description: String!, parentId: ID, active: Boolean!): Result @isAuthorized(role: "Admin")
+  updateGenre(genreId: ID!, description: String, parentId: ID, active: Boolean): Result @isAuthorized(role: "Admin")
+  deleteGenre(genreId: ID!): Result @isAuthorized(role: "Admin")
+
+  insertGame(name: String!, releaseYear: Int!, developer: String, publisher: String, mainseries: String, subseries: String, notes: String): Result @isAuthorized
+  updateGame(gameId: ID!, name: String, releaseYear: Int, developer: String, publisher: String, mainseries: String, subseries: String, notes: String): Result @isAuthorized
+  deleteGame(gameId: ID!): Result @isAuthorized
+
+  insertPlaythrough(gameId: ID!, typeId: ID!, statusId: ID!, notes: String): Result @isAuthorized
+  updatePlaythrough(playthroughId: ID!, gameId: ID, typeId: ID, statusId: ID, notes: String): Result @isAuthorized
+  deletePlaythrough(playthroughId: ID!): Result @isAuthorized
+
+  insertSession(gameId: ID!, playthroughId: ID!, startdate: DateTime!, swhours: Int!, swminutes: Int!, swseconds: Int!, swmilliseconds: Int!): Result @isAuthorized
+  updateSession(sessionId: ID!, gameId: ID, playthroughId: ID, startdate: DateTime, swhours: Int, swminutes: Int, swseconds: Int, swmilliseconds: Int): Result @isAuthorized
+  deleteSession(sessionId: ID!): Result @isAuthorized
+
+  appendGenreToGame(gameId: ID!, genreId: ID!): Result @isAuthorized
+  removeGenreFromGame(gameId: ID!, genreId: ID!): Result @isAuthorized
+  appendPlatformToGame(gameId: ID!, platformId: ID!): Result @isAuthorized
+  removePlatformFromGame(gameId: ID!, platformId: ID!): Result @isAuthorized
+}

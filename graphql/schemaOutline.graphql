@@ -1,0 +1,38 @@
+schema {
+  query: Query
+  mutation: Mutation
+}
+
+type Genre {
+
+}
+
+type Platform {
+  
+}
+
+type Playthrough {
+
+}
+
+type Session {
+
+}
+
+type Game {
+
+}
+
+type User {
+
+}
+
+
+type Query {
+
+}
+
+
+type Mutation {
+
+}
