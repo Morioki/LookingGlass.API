@@ -5,6 +5,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 load_dotenv()
 
+VERSION = '0.1.0'
+
 app = Flask(__name__)
 # app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{os.getcwd()}/todo.db"
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("DB_CONNECTION_STRING")

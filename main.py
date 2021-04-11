@@ -73,6 +73,10 @@ mutation.set_field('insertPlaythrough', playthrough.resolve_insert_playthrough)
 mutation.set_field('updatePlaythrough', playthrough.resolve_update_playthrough)
 mutation.set_field('deletePlaythrough', playthrough.resolve_delete_playthrough)
 
+mutation.set_field('insertSession', session.resolve_insert_session)
+mutation.set_field('updateSession', session.resolve_update_session)
+mutation.set_field('deleteSession', session.resolve_delete_session)
+
 
 type_defs = load_schema_from_path("./graphql/schema.graphql")
 schema = make_executable_schema(

@@ -81,6 +81,7 @@ type Session {
   swminutes: Int!
   swseconds: Int!
   swmilliseconds: Int!
+  notes: String
   entrydate: DateTime!
 }
 
@@ -149,4 +150,8 @@ type Mutation {
   insertPlaythrough(gameId: ID!, typeId: ID!, statusId: ID!, notes: String): Result @isAuthorized
   updatePlaythrough(playthroughId: ID!, gameId: ID, typeId: ID, statusId: ID, notes: String): Result @isAuthorized
   deletePlaythrough(playthroughId: ID!): Result @isAuthorized
+
+  insertSession(gameId: ID!, playthroughId: ID!, startdate: DateTime!, swhours: Int!, swminutes: Int!, swseconds: Int!, swmilliseconds: Int!): Result @isAuthorized
+  updateSession(sessionId: ID!, gameId: ID, playthroughId: ID, startdate: DateTime, swhours: Int, swminutes: Int, swseconds: Int, swmilliseconds: Int): Result @isAuthorized
+  deleteSession(sessionId: ID!): Result @isAuthorized
 }

@@ -227,6 +227,7 @@ class Sessions(db.Model):
     stopwatchminutes = db.Column(db.Integer)
     stopwatchseconds = db.Column(db.Integer)
     stopwatchmilliseconds = db.Column(db.Integer)
+    notes = db.Column(db.String(2000), nullable=True)
     entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
     user = db.relationship('Users', backref='sessions')
@@ -243,5 +244,6 @@ class Sessions(db.Model):
             'swminutes': self.stopwatchminutes,
             'swseconds': self.stopwatchseconds,
             'swmilliseconds': self.stopwatchmilliseconds,
+            'notes': self.notes,
             'entrydate': self.entrydate.isoformat()
         }
