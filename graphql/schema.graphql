@@ -141,4 +141,8 @@ type Mutation {
   insertGenre(description: String!, parentId: ID, active: Boolean!): Result @isAuthorized(role: "Admin")
   updateGenre(genreId: ID!, description: String, parentId: ID, active: Boolean): Result @isAuthorized(role: "Admin")
   deleteGenre(genreId: ID!): Result @isAuthorized(role: "Admin")
+
+  insertGame(name: String!, releaseYear: Int!, developer: String, publisher: String, mainseries: String, subseries: String, notes: String): Result @isAuthorized
+  updateGame(gameId: ID!, name: String, releaseYear: Int, developer: String, publisher: String, mainseries: String, subseries: String, notes: String): Result @isAuthorized
+  deleteGame(gameId: ID!): Result @isAuthorized
 }

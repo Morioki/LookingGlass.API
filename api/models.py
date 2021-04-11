@@ -1,5 +1,6 @@
 from os import access
 from sqlalchemy.orm import backref
+from sqlalchemy.sql import func
 from main import db
 
 usersInRoles = db.Table('usersinroles',
@@ -126,7 +127,7 @@ class Users(db.Model):
     firstname = db.Column(db.String(50), nullable=True)
     lastname = db.Column(db.String(50), nullable=True)
     accesstoken = db.Column(db.String(64), nullable=False)
-    entrydate = db.Column(db.DateTime(timezone=True))
+    entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
     roles = db.relationship('UserRoles', secondary=usersInRoles, backref='users')
 
@@ -163,7 +164,7 @@ class Games(db.Model):
     mainseries = db.Column(db.String(255), nullable=True)
     subseries = db.Column(db.String(255), nullable=True)
     notes = db.Column(db.String(2000), nullable=True)
-    entrydate = db.Column(db.DateTime(timezone=True))
+    entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
     user = db.relationship('Users', backref='games')
     # platform =  db.relationship('Platforms', backref='games')
@@ -196,7 +197,7 @@ class Playthroughs(db.Model):
     typeid = db.Column(db.Integer, db.ForeignKey('lg.playthroughtypes.id', onupdate='CASCADE'))
     statusid = db.Column(db.Integer, db.ForeignKey('lg.playthroughstatus.id', onupdate='CASCADE'))
     notes = db.Column(db.String(2000), nullable=True)
-    entrydate = db.Column(db.DateTime(timezone=True))
+    entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
     user = db.relationship('Users', backref='playthroughs')
     game = db.relationship('Games', backref='playthroughs')
@@ -226,7 +227,7 @@ class Sessions(db.Model):
     stopwatchminutes = db.Column(db.Integer)
     stopwatchseconds = db.Column(db.Integer)
     stopwatchmilliseconds = db.Column(db.Integer)
-    entrydate = db.Column(db.DateTime(timezone=True))
+    entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
     user = db.relationship('Users', backref='sessions')
     game = db.relationship('Games', backref='sessions')

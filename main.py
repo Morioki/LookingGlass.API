@@ -65,6 +65,10 @@ mutation.set_field('insertGenre', genre.resolve_insert_genres)
 mutation.set_field('updateGenre', genre.resolve_update_genres)
 mutation.set_field('deleteGenre', genre.resolve_delete_genre)
 
+mutation.set_field('insertGame', game.resolve_insert_game)
+mutation.set_field('updateGame', game.resolve_update_game)
+mutation.set_field('deleteGame', game.resolve_delete_game)
+
 
 type_defs = load_schema_from_path("./graphql/schema.graphql")
 schema = make_executable_schema(
