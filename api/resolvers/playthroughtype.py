@@ -20,11 +20,12 @@ def resolve_playthroughtype(obj, info, playthroughtype_id):
         playthroughtype = PlaythroughTypes.query.get(playthroughtype_id)
         payload = playthroughtype.to_dict()
     except AttributeError:
-        payload = {
-            'id': -1,
-            'description': f"Playthrough Type item matching id {playthroughtype_id} not found",
-            'active': False
-        }
+        # payload = {
+        #     'id': -1,
+        #     'description': f"Playthrough Type item matching id {playthroughtype_id} not found",
+        #     'active': False
+        # }
+        payload = None
 
     return payload
 

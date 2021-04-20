@@ -22,11 +22,12 @@ def resolve_generation(obj, info, generation_id):
         generation = PlatformGenerations.query.get(generation_id)
         payload = generation.to_dict()
     except AttributeError:  # todo not found
-        payload = {
-            'id': -1,
-            'generationcode': f'N/A',
-            'description': f"Generation item matching id {generation_id} not found"            
-        }
+        # payload = {
+        #     'id': -1,
+        #     'generationcode': f'N/A',
+        #     'description': f"Generation item matching id {generation_id} not found"            
+        # }
+        payload = None
 
     return payload
 

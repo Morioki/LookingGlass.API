@@ -1,7 +1,5 @@
-from os import access
-from sqlalchemy.orm import backref
 from sqlalchemy.sql import func
-from main import db
+from api.base import db
 
 usersInRoles = db.Table('usersinroles',
     db.Column('id', db.Integer, primary_key=True),
@@ -177,8 +175,8 @@ class Games(db.Model):
             'name': self.gamename,
             'releaseyear': self.releaseyear,
             # 'platform': self.platform.to_dict(),
-            'platforms': [platform.to_dict() for platform in self.platforms],
-            'genres': [genre.to_dict() for genre in self.genres],
+            'platforms': [platform.to_dict() for platform in self.platforms], # pylint: disable=E1133
+            'genres': [genre.to_dict() for genre in self.genres], # pylint: disable=E1133
             'developer': self.developer,
             'publisher': self.publisher,
             'mainseries': self.mainseries,

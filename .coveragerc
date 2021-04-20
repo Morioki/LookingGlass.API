@@ -1,0 +1,6 @@
+[run]
+branch = True
+source = api
+
+[html]
+directory = .coverage_report

@@ -151,8 +151,8 @@ type Mutation {
   updatePlaythrough(playthroughId: ID!, gameId: ID, typeId: ID, statusId: ID, notes: String): Result @isAuthorized
   deletePlaythrough(playthroughId: ID!): Result @isAuthorized
 
-  insertSession(gameId: ID!, playthroughId: ID!, startdate: DateTime!, swhours: Int!, swminutes: Int!, swseconds: Int!, swmilliseconds: Int!): Result @isAuthorized
-  updateSession(sessionId: ID!, gameId: ID, playthroughId: ID, startdate: DateTime, swhours: Int, swminutes: Int, swseconds: Int, swmilliseconds: Int): Result @isAuthorized
+  insertSession(gameId: ID!, playthroughId: ID!, startdate: DateTime!, swhours: Int!, swminutes: Int!, swseconds: Int!, swmilliseconds: Int!, notes: String): Result @isAuthorized
+  updateSession(sessionId: ID!, gameId: ID, playthroughId: ID, startdate: DateTime, swhours: Int, swminutes: Int, swseconds: Int, swmilliseconds: Int, notes: String): Result @isAuthorized
   deleteSession(sessionId: ID!): Result @isAuthorized
 
   appendGenreToGame(gameId: ID!, genreId: ID!): Result @isAuthorized

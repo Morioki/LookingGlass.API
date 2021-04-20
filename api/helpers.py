@@ -1,7 +1,8 @@
 from ariadne import SchemaDirectiveVisitor
 from graphql import default_field_resolver, GraphQLError
 from api.models import Users
-
+import random
+import string
 
 def get_user_context(request):
     context = {}
@@ -17,6 +18,9 @@ def get_user_context(request):
         if user is not None:
             context['user'] = user
     return context
+
+def random_string_generator(str_size):
+    return ''.join(random.choice(string.ascii_letters) for x in range(str_size))
 
     
 class IsAuthorizedDirective(SchemaDirectiveVisitor):

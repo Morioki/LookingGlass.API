@@ -8,11 +8,11 @@ def resolve_games(obj, info):
     try:
         user = info.context.get('user')
         games = [game.to_dict() for game in Games.query.filter_by(userid = user.id).all()]
-        print(games)
+        # print(games)
         payload = games
     except Exception as error:
         print(error)
-        payload = []
+        payload = None
     return payload
 
 @convert_kwargs_to_snake_case
@@ -23,7 +23,9 @@ def resolve_game(obj, info, game_id):
         print(game.to_dict())
         payload = game.to_dict()
     except AttributeError: # TODO handle error data
-        pass
+        payload = None
+    except Exception as error:
+        payload = None
     return payload
 
 # * Mutations
@@ -160,7 +162,9 @@ def resolve_remove_genre_game(obj, info, game_id, genre_id):
         game = Games.query.get(game_id)
         genre = Genres.query.get(genre_id)
 
-        # TODO Handle if platform doesn't exist
+        if game is None or genre is None:
+            raise AttributeError
+
         game.genres.remove(genre)
 
         db.session.commit()

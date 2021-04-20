@@ -21,11 +21,12 @@ def resolve_playthroughstatus(obj, info, playthroughstatus_id):
         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
         payload = playthroughstatus.to_dict()
     except AttributeError:
-        payload = {
-            'id': -1,
-            'description': f"Playthrough Status item matching id {playthroughstatus_id} not found",
-            'active': False
-        }
+        # payload = {
+        #     'id': -1,
+        #     'description': f"Playthrough Status item matching id {playthroughstatus_id} not found",
+        #     'active': False
+        # }
+        payload = None
 
     return payload
 

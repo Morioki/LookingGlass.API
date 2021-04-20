@@ -38,12 +38,12 @@ def resolve_session(obj, info, session_id):
 # * Mutations
 @convert_kwargs_to_snake_case
 def resolve_insert_session(obj, info, game_id, playthrough_id, startdate, swhours, 
-        swminutes, swseconds, swmilliseconds):
+        swminutes, swseconds, swmilliseconds, notes=None):
     try:
         user = info.context.get('user')
         session = Sessions(userid = user.id, gameid = game_id, playthroughid = playthrough_id,
                 startdate = startdate, stopwatchhours = swhours, stopwatchminutes = swminutes,
-                stopwatchseconds = swseconds, stopwatchmilliseconds = swmilliseconds)
+                stopwatchseconds = swseconds, stopwatchmilliseconds = swmilliseconds, notes = notes)
         
         db.session.add(session)
         db.session.commit()
@@ -64,7 +64,7 @@ def resolve_insert_session(obj, info, game_id, playthrough_id, startdate, swhour
 
 @convert_kwargs_to_snake_case
 def resolve_update_session(obj, info, session_id, game_id=None, playthrough_id=None, 
-        startdate=None, swhours=None, swminutes=None, swseconds=None, swmilliseconds=None):
+        startdate=None, swhours=None, swminutes=None, swseconds=None, swmilliseconds=None, notes=None):
     try:
         session = Sessions.query.get(session_id)
         recordChanged = False
@@ -91,6 +91,9 @@ def resolve_update_session(obj, info, session_id, game_id=None, playthrough_id=N
             recordChanged = True
         if swmilliseconds is not None and session.stopwatchmilliseconds != int(swmilliseconds):
             session.stopwatchmilliseconds = int(swmilliseconds)
+            recordChanged = True
+        if notes is not None and session.notes != notes:
+            session.notes = notes
             recordChanged = True
 
         if recordChanged:
