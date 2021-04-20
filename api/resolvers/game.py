@@ -4,10 +4,16 @@ from api.helpers import NoChangeError
 from ariadne import convert_kwargs_to_snake_case
 
 # * Query
-def resolve_games(obj, info):
+@convert_kwargs_to_snake_case
+def resolve_games(obj, info, platform_id=None, genre_id=None):
     try:
         user = info.context.get('user')
-        games = [game.to_dict() for game in Games.query.filter_by(userid = user.id).all()]
+        games_query = Games.query.filter_by(userid = user.id)
+        if platform_id is not None:
+            games_query = games_query.filter(Games.platforms.any(id = platform_id))
+        if genre_id is not None:
+            games_query = games_query.filter(Games.genres.any(id = genre_id))
+        games = [game.to_dict() for game in games_query.all()]
         # print(games)
         payload = games
     except Exception as error:

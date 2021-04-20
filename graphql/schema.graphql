@@ -96,7 +96,7 @@ type Query {
   generations: [Generation] 
   generation(generationId: ID!): Generation 
 
-  platforms: [Platform]
+  platforms(generationId: Int): [Platform]
   platform(platformId: ID!): Platform
 
   playthroughtypes: [PlaythroughType]
@@ -111,10 +111,10 @@ type Query {
   users: [User] @isAuthorized(role: "Admin")
   user: User @isAuthorized
 
-  games: [Game] @isAuthorized
+  games(platformId: Int, genreId: Int): [Game] @isAuthorized
   game(gameId: ID!): Game @isAuthorized
 
-  playthroughs(gameId: Int): [Playthrough] @isAuthorized
+  playthroughs(gameId: Int, playthroughtypeId: Int, playthroughstatusId: Int): [Playthrough] @isAuthorized
   playthrough(playthroughId: ID!): Playthrough @isAuthorized
 
   sessions(playthroughId: Int, gameId: Int): [Session] @isAuthorized

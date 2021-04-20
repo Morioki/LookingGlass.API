@@ -4,14 +4,19 @@ from api.helpers import NoChangeError
 from ariadne import convert_kwargs_to_snake_case
 
 @convert_kwargs_to_snake_case
-def resolve_playthroughs(obj, info, game_id=None):
+def resolve_playthroughs(obj, info, game_id=None, playthroughtype_id=None, playthroughstatus_id=None):
     try:
         user = info.context.get('user')
-        if game_id is None:
-            playthroughs = [playthrough.to_dict() for playthrough in Playthroughs.query.filter_by(userid = user.id).all()]
-        else:
-            # TODO Potential need for param validation / sanitization
-            playthroughs = [playthrough.to_dict() for playthrough in Playthroughs.query.filter_by(userid = user.id, gameid = game_id).all()]
+        playthough_query = Playthroughs.query.filter_by(userid = user.id)
+        if game_id is not None: 
+            playthough_query = playthough_query.filter_by(gameid = game_id)
+        if playthroughtype_id is not None:
+            playthough_query = playthough_query.filter_by(typeid = playthroughtype_id)
+        if playthroughstatus_id is not None:
+            playthough_query = playthough_query.filter_by(statusid = playthroughstatus_id)
+        
+        # TODO Potential need for param validation / sanitization
+        playthroughs = [playthrough.to_dict() for playthrough in playthough_query.all()]
         payload = playthroughs
     except Exception as error:
         print(error)

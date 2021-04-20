@@ -4,9 +4,13 @@ from api.helpers import NoChangeError
 from ariadne import convert_kwargs_to_snake_case
 
 # * Platform Resolvers
-def resolve_platforms(obj, info):
+@convert_kwargs_to_snake_case
+def resolve_platforms(obj, info, generation_id=None):
     try:
-        platforms = [plat.to_dict() for plat in Platforms.query.all()]
+        platform_query = Platforms.query
+        if generation_id is not None:
+            platform_query = platform_query.filter_by(generationid = generation_id)
+        platforms = [plat.to_dict() for plat in platform_query.all()]
         print(platforms)
         payload = platforms
     except Exception as error:
