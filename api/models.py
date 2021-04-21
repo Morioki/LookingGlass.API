@@ -24,10 +24,12 @@ gameplatforms = db.Table('gameplatforms',
 
 class Platforms(db.Model):
     __tablename__ = 'platforms'
-    __table_args__ = {"schema": "lg"}
+    __table_args__ = {'schema': 'lg'}
 
     id = db.Column(db.Integer, primary_key=True)
-    generationid = db.Column(db.Integer, db.ForeignKey('lg.platformgenerations.id', onupdate='CASCADE'))
+    generationid = db.Column(db.Integer,
+                             db.ForeignKey('lg.platformgenerations.id',
+                                           onupdate='CASCADE'))
     platformcode = db.Column(db.String(), nullable=False)
     description = db.Column(db.String(), nullable=False)
     handheld = db.Column(db.Boolean, nullable=False)
@@ -39,7 +41,7 @@ class Platforms(db.Model):
         return {
             'id': self.id,
             'platformcode': self.platformcode,
-            'description': self.description, 
+            'description': self.description,
             'handheld': self.handheld,
             'active': self.active,
             'generation': self.generation.to_dict(),
@@ -49,7 +51,7 @@ class Platforms(db.Model):
 
 class PlatformGenerations(db.Model):
     __tablename__ = 'platformgenerations'
-    __table_args__ = {"schema": "lg"}
+    __table_args__ = {'schema': 'lg'}
 
     id = db.Column(db.Integer, primary_key=True)
     generationcode = db.Column(db.String(), nullable=False)
@@ -57,9 +59,9 @@ class PlatformGenerations(db.Model):
 
     def to_dict(self):
         return {
-            "id": self.id,
-            "generationcode": self.generationcode,
-            "description": self.description
+            'id': self.id,
+            'generationcode': self.generationcode,
+            'description': self.description
         }
 
 
@@ -101,7 +103,9 @@ class Genres(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     description = db.Column(db.String(), nullable=False)
-    parentid = db.Column(db.Integer, db.ForeignKey('lg.genres.id', onupdate='CASCADE'), nullable=True)
+    parentid = db.Column(db.Integer, db.ForeignKey('lg.genres.id',
+                                                   onupdate='CASCADE'),
+                                                   nullable=True)
     active = db.Column(db.Boolean, nullable=False)
 
     parent = db.relationship('Genres', remote_side=[id])
@@ -112,7 +116,7 @@ class Genres(db.Model):
             'description': self.description,
             'active': self.active,
             'testing': self.parent,
-            'parent': self.parent.to_dict() if self.parent is not None else None
+            'parent': self.parent.to_dict() if self.parent is not None else None # pylint: disable=C0301
         }
 
 
@@ -127,7 +131,9 @@ class Users(db.Model):
     accesstoken = db.Column(db.String(64), nullable=False)
     entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
-    roles = db.relationship('UserRoles', secondary=usersInRoles, backref='users')
+    roles = db.relationship('UserRoles',
+                            secondary=usersInRoles,
+                            backref='users')
 
     def to_dict(self):
         return {
@@ -135,7 +141,6 @@ class Users(db.Model):
             'username': self.username,
             'firstname': self.firstname,
             'lastname': self.lastname,
-            # 'accesstoken': self.accesstoken,
             'entrydate': self.entrydate.isoformat()
         }
 
@@ -153,8 +158,9 @@ class Games(db.Model):
     __table_args__ = {'schema': 'lg'}
 
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id', onupdate='CASCADE', ondelete='CASCADE'))
-    # platformid = db.Column(db.Integer, db.ForeignKey('lg.platforms.id', onupdate='CASCADE'))
+    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id',
+                                                 onupdate='CASCADE',
+                                                 ondelete='CASCADE'))
     gamename = db.Column(db.String(255), nullable=False)
     releaseyear = db.Column(db.Integer, nullable=False)
     developer = db.Column(db.String(255), nullable=True)
@@ -165,16 +171,16 @@ class Games(db.Model):
     entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
     user = db.relationship('Users', backref='games')
-    # platform =  db.relationship('Platforms', backref='games')
-    platforms = db.relationship('Platforms', secondary=gameplatforms, backref='games')
-    genres = db.relationship('Genres', secondary=genretags, backref='games')
+    platforms = db.relationship('Platforms',
+                                secondary=gameplatforms,
+                                backref='games')
+    genres = db.relationship('Genres',secondary=genretags, backref='games')
 
     def to_dict(self):
         return {
             'id': self.id,
             'name': self.gamename,
             'releaseyear': self.releaseyear,
-            # 'platform': self.platform.to_dict(),
             'platforms': [platform.to_dict() for platform in self.platforms], # pylint: disable=E1133
             'genres': [genre.to_dict() for genre in self.genres], # pylint: disable=E1133
             'developer': self.developer,
@@ -190,10 +196,16 @@ class Playthroughs(db.Model):
     __table_args__ = {'schema': 'lg'}
 
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id', onupdate='CASCADE', ondelete='CASCADE'))
-    gameid = db.Column(db.Integer, db.ForeignKey('lg.games.id', onupdate='CASCADE', ondelete='CASCADE'))
-    typeid = db.Column(db.Integer, db.ForeignKey('lg.playthroughtypes.id', onupdate='CASCADE'))
-    statusid = db.Column(db.Integer, db.ForeignKey('lg.playthroughstatus.id', onupdate='CASCADE'))
+    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id',
+                                                 onupdate='CASCADE',
+                                                 ondelete='CASCADE'))
+    gameid = db.Column(db.Integer, db.ForeignKey('lg.games.id',
+                                                 onupdate='CASCADE',
+                                                 ondelete='CASCADE'))
+    typeid = db.Column(db.Integer, db.ForeignKey('lg.playthroughtypes.id',
+                                                 onupdate='CASCADE'))
+    statusid = db.Column(db.Integer, db.ForeignKey('lg.playthroughstatus.id',
+                                                   onupdate='CASCADE'))
     notes = db.Column(db.String(2000), nullable=True)
     entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
@@ -217,9 +229,15 @@ class Sessions(db.Model):
     __table_args__ = {'schema': 'lg'}
 
     id = db.Column(db.Integer, primary_key=True)
-    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id', onupdate='CASCADE', ondelete='CASCADE'))
-    gameid = db.Column(db.Integer, db.ForeignKey('lg.games.id', onupdate='CASCADE', ondelete='CASCADE'))
-    playthroughid = db.Column(db.Integer, db.ForeignKey('lg.playthroughs.id', onupdate='CASCADE', ondelete='CASCADE'))
+    userid = db.Column(db.Integer, db.ForeignKey('lg.users.id',
+                                                 onupdate='CASCADE',
+                                                 ondelete='CASCADE'))
+    gameid = db.Column(db.Integer, db.ForeignKey('lg.games.id',
+                                                 onupdate='CASCADE',
+                                                 ondelete='CASCADE'))
+    playthroughid = db.Column(db.Integer, db.ForeignKey('lg.playthroughs.id',
+                                                        onupdate='CASCADE',
+                                                        ondelete='CASCADE'))
     startdate = db.Column(db.DateTime(timezone=True))
     stopwatchhours = db.Column(db.Integer)
     stopwatchminutes = db.Column(db.Integer)

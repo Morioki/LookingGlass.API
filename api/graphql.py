@@ -1,17 +1,12 @@
 
 from ariadne import load_schema_from_path, make_executable_schema, \
     snake_case_fallback_resolvers, ObjectType
-from ariadne.contrib.tracing.apollotracing import ApolloTracingExtensionSync
-
 from api.resolvers import generation, platform, genre, user, game, playthroughtype, \
     playthroughstatus, playthrough, session
-# from api.mutations import pl
-from api.helpers import get_user_context, IsAuthorizedDirective
-    
-# from api.mutations import resolve_create_todo, resolve_mark_done, resolve_delete_todo, resolve_update_due_date
+from api.helpers import IsAuthorizedDirective
 
-query = ObjectType("Query")
-mutation = ObjectType("Mutation")
+query = ObjectType('Query')
+mutation = ObjectType('Mutation')
 
 query.set_field('generations', generation.resolve_generations)
 query.set_field('generation', generation.resolve_generation)
@@ -31,8 +26,8 @@ query.set_field('game', game.resolve_game)
 query.set_field('playthroughtypes', playthroughtype.resolve_playthroughtypes)
 query.set_field('playthroughtype', playthroughtype.resolve_playthroughtype)
 
-query.set_field('playthroughstatuses', playthroughstatus.resolve_playthroughstatuses)
-query.set_field('playthroughstatus', playthroughstatus.resolve_playthroughstatus)
+query.set_field('playthroughstatuses', playthroughstatus.resolve_playthroughstatuses) # pylint: disable=C0301
+query.set_field('playthroughstatus', playthroughstatus.resolve_playthroughstatus) # pylint: disable=C0301
 
 query.set_field('playthroughs', playthrough.resolve_playthroughs)
 query.set_field('playthrough', playthrough.resolve_playthrough)
@@ -40,13 +35,13 @@ query.set_field('playthrough', playthrough.resolve_playthrough)
 query.set_field('sessions', session.resolve_sessions)
 query.set_field('session', session.resolve_session)
 
-mutation.set_field('insertPlaythroughStatus', playthroughstatus.resolve_insert_playthroughstatus)
-mutation.set_field('updatePlaythroughStatus', playthroughstatus.resolve_update_playthroughstatus)
-mutation.set_field('deletePlaythroughStatus',playthroughstatus.resolve_delete_playthroughstatus)
+mutation.set_field('insertPlaythroughStatus', playthroughstatus.resolve_insert_playthroughstatus) # pylint: disable=C0301
+mutation.set_field('updatePlaythroughStatus', playthroughstatus.resolve_update_playthroughstatus) # pylint: disable=C0301
+mutation.set_field('deletePlaythroughStatus', playthroughstatus.resolve_delete_playthroughstatus) # pylint: disable=C0301
 
-mutation.set_field('insertPlaythroughType', playthroughtype.resolve_insert_playthroughtype)
-mutation.set_field('updatePlaythroughType', playthroughtype.resolve_update_playthroughtype)
-mutation.set_field('deletePlaythroughType', playthroughtype.resolve_delete_playthroughtype)
+mutation.set_field('insertPlaythroughType', playthroughtype.resolve_insert_playthroughtype) # pylint: disable=C0301
+mutation.set_field('updatePlaythroughType', playthroughtype.resolve_update_playthroughtype) # pylint: disable=C0301
+mutation.set_field('deletePlaythroughType', playthroughtype.resolve_delete_playthroughtype) # pylint: disable=C0301
 
 mutation.set_field('insertGeneration', generation.resolve_insert_generation)
 mutation.set_field('updateGeneration', generation.resolve_update_generation)
@@ -78,7 +73,7 @@ mutation.set_field('appendPlatformToGame', game.resolve_append_platform_game)
 mutation.set_field('removePlatformFromGame', game.resolve_remove_platform_game)
 
 
-type_defs = load_schema_from_path("./graphql/schema.graphql")
+type_defs = load_schema_from_path('./graphql/schema.graphql')
 
 schema = make_executable_schema(
     type_defs, query, mutation, snake_case_fallback_resolvers, directives= {

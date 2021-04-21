@@ -27,7 +27,7 @@ ignore-patterns=
 
 # Use multiple processes to speed up Pylint. Specifying 0 will auto-detect the
 # number of processors available to use.
-jobs=1
+jobs=4
 
 # Control the amount of potential inferred values when inferring a single
 # object. This can help the performance when dealing with large functions or
@@ -70,6 +70,7 @@ disable=
         C0114, # Missing Module Docstring
         C0115, # Missing Class Docstring
         C0116, # Missing Function Docstring
+        R0903, # Too Few Public Methods
         print-statement,
         parameter-unpacking,
         unpacking-in-except,
@@ -198,7 +199,7 @@ never-returning-functions=sys.exit
 
 # This flag controls whether inconsistent-quotes generates a warning when the
 # character used as a quote delimiter is used inconsistently within a module.
-check-quote-consistency=no
+check-quote-consistency=yes
 
 # This flag controls whether the implicit-str-concat should generate a warning
 # on implicit string concatenation in sequences defined over several lines.
@@ -244,7 +245,9 @@ redefining-builtins-modules=six.moves,past.builtins,future.builtins,builtins,io
 expected-line-ending-format=
 
 # Regexp for a line that is allowed to be longer than the limit.
-ignore-long-lines=^\s*(# )?<?https?://\S+>?$
+ignore-long-lines=(?x)(
+  ^\s*(\#\ )?<?https?://\S+>?$|
+  ^\s*(from\s+\S+\s+)?import\s+.+$)
 
 # Number of spaces of indent required inside a hanging or continued line.
 indent-after-paren=4
@@ -254,10 +257,11 @@ indent-after-paren=4
 indent-string='    '
 
 # Maximum number of characters on a single line.
-max-line-length=100
+# Pep8 directs length to be 79, default is 80
+max-line-length=79
 
 # Maximum number of lines in a module.
-max-module-lines=1000
+max-module-lines=99999
 
 # Allow the body of a class to be on the same line as the declaration if body
 # contains single statement.
@@ -265,7 +269,7 @@ single-line-class-stmt=no
 
 # Allow the body of an if to be on the same line as the test if there is no
 # else.
-single-line-if-stmt=no
+single-line-if-stmt=yes
 
 
 [LOGGING]
@@ -533,8 +537,8 @@ valid-metaclass-classmethod-first-arg=cls
 
 [DESIGN]
 
-# Maximum number of arguments for function / method.
-max-args=5
+# Maximum number of arguments for function / method. Default = 5
+max-args=10
 
 # Maximum number of attributes for a class (see R0902).
 max-attributes=7
