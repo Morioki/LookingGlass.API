@@ -1,23 +1,21 @@
+from ariadne import convert_kwargs_to_snake_case
 from api.base import db
 from api.models import Sessions
 from api.helpers import NoChangeError
-from ariadne import convert_kwargs_to_snake_case
 
 @convert_kwargs_to_snake_case
-def resolve_sessions(obj, info, playthrough_id=None, game_id=None):
+def resolve_sessions(_obj, info, playthrough_id=None, game_id=None):
     try:
         user = info.context.get('user')
         # TODO Potential need for sanitization
         if playthrough_id is None and game_id is None:
-            sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id).all()]
+            sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id).all()] # pylint: disable=C0301
         elif playthrough_id is None and game_id is not None:
-            sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id, gameid = game_id).all()]
+            sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id, gameid = game_id).all()] # pylint: disable=C0301
         elif playthrough_id is not None and game_id is None:
-            sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id, playthroughid = playthrough_id).all()]
+            sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id, playthroughid = playthrough_id).all()] # pylint: disable=C0301
         else:
-            sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id, playthroughid = playthrough_id, gameid = game_id).all()]
-        # sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id).all()]
-        # print(sessions)
+            sessions = [session.to_dict() for session in Sessions.query.filter_by(userid = user.id, playthroughid = playthrough_id, gameid = game_id).all()] # pylint: disable=C0301
         payload = sessions
     except Exception as error:
         print(error)
@@ -25,10 +23,10 @@ def resolve_sessions(obj, info, playthrough_id=None, game_id=None):
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_session(obj, info, session_id):
+def resolve_session(_obj, info, session_id):
     try:
         user = info.context.get('user')
-        session = Sessions.query.filter_by(userid = user.id, id = session_id).one()
+        session = Sessions.query.filter_by(userid = user.id, id = session_id).one() # pylint: disable=C0301
         print(session.to_dict())
         payload = session.to_dict()
     except AttributeError: # TODO handle error data
@@ -37,14 +35,16 @@ def resolve_session(obj, info, session_id):
 
 # * Mutations
 @convert_kwargs_to_snake_case
-def resolve_insert_session(obj, info, game_id, playthrough_id, startdate, swhours, 
-        swminutes, swseconds, swmilliseconds, notes=None):
+def resolve_insert_session(_obj, info, game_id, playthrough_id, startdate,
+        swhours, swminutes, swseconds, swmilliseconds, notes=None):
     try:
         user = info.context.get('user')
-        session = Sessions(userid = user.id, gameid = game_id, playthroughid = playthrough_id,
-                startdate = startdate, stopwatchhours = swhours, stopwatchminutes = swminutes,
-                stopwatchseconds = swseconds, stopwatchmilliseconds = swmilliseconds, notes = notes)
-        
+        session = Sessions(userid = user.id, gameid = game_id,
+                playthroughid = playthrough_id, startdate = startdate,
+                stopwatchhours = swhours, stopwatchminutes = swminutes,
+                stopwatchseconds = swseconds,
+                stopwatchmilliseconds = swmilliseconds, notes = notes)
+
         db.session.add(session)
         db.session.commit()
 
@@ -53,50 +53,52 @@ def resolve_insert_session(obj, info, game_id, playthrough_id, startdate, swhour
             'field': 'Sessions',
             'id': session.id
         }
-    except Exception as er:
+    except Exception as error:
         payload = {
             'success': False,
-            'errors': [er],
+            'errors': [error],
             'field': 'Sessions'
         }
 
     return payload
 
+# pylint: disable=R0912
 @convert_kwargs_to_snake_case
-def resolve_update_session(obj, info, session_id, game_id=None, playthrough_id=None, 
-        startdate=None, swhours=None, swminutes=None, swseconds=None, swmilliseconds=None, notes=None):
+def resolve_update_session(_obj, _info, session_id, game_id=None,
+        playthrough_id=None, startdate=None, swhours=None, swminutes=None,
+        swseconds=None, swmilliseconds=None, notes=None):
     try:
         session = Sessions.query.get(session_id)
-        recordChanged = False
+        record_changed = False
 
         if session is None:
             raise AttributeError
         if game_id is not None and session.gameid != int(game_id):
             session.gameid = int(game_id)
-            recordChanged = True
-        if playthrough_id is not None and session.playthroughid != int(playthrough_id):
+            record_changed = True
+        if playthrough_id is not None and session.playthroughid != int(playthrough_id): # pylint: disable=C0301
             session.playthroughid = int(playthrough_id)
-            recordChanged = True
+            record_changed = True
         if startdate is not None and session.startdate != startdate:
             session.startdate = startdate
-            recordChanged = True
+            record_changed = True
         if swhours is not None and session.stopwatchhours != int(swhours):
             session.stopwatchhours = int(swhours)
-            recordChanged = True
-        if swminutes is not None and session.stopwatchminutes != int(swminutes):
+            record_changed = True
+        if swminutes is not None and session.stopwatchminutes != int(swminutes): # pylint: disable=C0301
             session.stopwatchminutes = int(swminutes)
-            recordChanged = True
-        if swseconds is not None and session.stopwatchseconds != int(swseconds):
+            record_changed = True
+        if swseconds is not None and session.stopwatchseconds != int(swseconds): # pylint: disable=C0301
             session.stopwatchseconds = int(swseconds)
-            recordChanged = True
-        if swmilliseconds is not None and session.stopwatchmilliseconds != int(swmilliseconds):
+            record_changed = True
+        if swmilliseconds is not None and session.stopwatchmilliseconds != int(swmilliseconds): # pylint: disable=C0301
             session.stopwatchmilliseconds = int(swmilliseconds)
-            recordChanged = True
+            record_changed = True
         if notes is not None and session.notes != notes:
             session.notes = notes
-            recordChanged = True
+            record_changed = True
 
-        if recordChanged:
+        if record_changed:
             db.session.commit()
 
             payload = {
@@ -106,7 +108,7 @@ def resolve_update_session(obj, info, session_id, game_id=None, playthrough_id=N
             }
         else:
             raise NoChangeError
-        
+
     except AttributeError:
         payload = {
             'success': False,
@@ -116,14 +118,14 @@ def resolve_update_session(obj, info, session_id, game_id=None, playthrough_id=N
     except NoChangeError:
         payload = {
             'success': False,
-            'errors': [f'No values to change'],
+            'errors': ['No values to change'],
             'field': 'Sessions'
         }
-    
+
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_delete_session(obj, info, session_id):
+def resolve_delete_session(_obj, _info, session_id):
     try:
         session = Sessions.query.get(session_id)
         if session is None:
@@ -144,4 +146,3 @@ def resolve_delete_session(obj, info, session_id):
         }
 
     return payload
-

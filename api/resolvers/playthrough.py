@@ -1,47 +1,49 @@
+from ariadne import convert_kwargs_to_snake_case
 from api.base import db
 from api.models import Playthroughs
 from api.helpers import NoChangeError
-from ariadne import convert_kwargs_to_snake_case
+
 
 @convert_kwargs_to_snake_case
-def resolve_playthroughs(obj, info, game_id=None, playthroughtype_id=None, playthroughstatus_id=None):
+def resolve_playthroughs(_obj, info, game_id=None, playthroughtype_id=None,
+        playthroughstatus_id=None):
     try:
         user = info.context.get('user')
         playthough_query = Playthroughs.query.filter_by(userid = user.id)
-        if game_id is not None: 
+        if game_id is not None:
             playthough_query = playthough_query.filter_by(gameid = game_id)
         if playthroughtype_id is not None:
-            playthough_query = playthough_query.filter_by(typeid = playthroughtype_id)
+            playthough_query = playthough_query.filter_by(typeid = playthroughtype_id) # pylint: disable=C0301
         if playthroughstatus_id is not None:
-            playthough_query = playthough_query.filter_by(statusid = playthroughstatus_id)
-        
+            playthough_query = playthough_query.filter_by(statusid = playthroughstatus_id) # pylint: disable=C0301
+
         # TODO Potential need for param validation / sanitization
-        playthroughs = [playthrough.to_dict() for playthrough in playthough_query.all()]
+        playthroughs = [playthrough.to_dict() for playthrough in playthough_query.all()] # pylint: disable=C0301
         payload = playthroughs
-    except Exception as error:
-        print(error)
-        payload = []
+    except Exception:
+        payload = None
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_playthrough(obj, info, playthrough_id):
+def resolve_playthrough(_obj, info, playthrough_id):
     try:
         user = info.context.get('user')
-        playthrough = Playthroughs.query.filter_by(userid = user.id, id = playthrough_id).one()
+        playthrough = Playthroughs.query.filter_by(userid = user.id, id = playthrough_id).one() # pylint: disable=C0301
         print(playthrough.to_dict())
         payload = playthrough.to_dict()
-    except AttributeError: # TODO handle error data
-        pass
+    except AttributeError:
+        payload = None
     return payload
 
 # * Mutations
 @convert_kwargs_to_snake_case
-def resolve_insert_playthrough(obj, info, game_id, type_id, status_id, notes=None):
+def resolve_insert_playthrough(_obj, info, game_id, type_id, status_id,
+        notes=None):
     try:
         user = info.context.get('user')
-        playthrough = Playthroughs(userid = user.id, gameid = game_id, typeid = type_id,
-                statusid = status_id, notes = notes)
-        
+        playthrough = Playthroughs(userid = user.id, gameid = game_id,
+                typeid = type_id, statusid = status_id, notes = notes)
+
         db.session.add(playthrough)
         db.session.commit()
 
@@ -50,38 +52,39 @@ def resolve_insert_playthrough(obj, info, game_id, type_id, status_id, notes=Non
             'field': 'Playthroughs',
             'id': playthrough.id
         }
-    except Exception as er:
+    except Exception as error:
         payload = {
             'success': False,
-            'errors': [er],
+            'errors': [error],
             'field': 'Playthroughs'
         }
 
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_update_playthrough(obj, info, playthrough_id, game_id=None, type_id=None,
-        status_id=None, notes=None):
+def resolve_update_playthrough(_obj, _info, playthrough_id, game_id=None,
+        type_id=None, status_id=None, notes=None):
     try:
+        # TODO Verify that this is limited to the UserID
         playthrough = Playthroughs.query.get(playthrough_id)
-        recordChanged = False
+        record_changed = False
 
         if playthrough is None:
             raise AttributeError
         if game_id is not None and playthrough.gameid != int(game_id):
             playthrough.gameid = int(game_id)
-            recordChanged = True
+            record_changed = True
         if type_id is not None and playthrough.typeid != int(type_id):
             playthrough.typeid = int(type_id)
-            recordChanged = True
+            record_changed = True
         if status_id is not None and playthrough.statusid != int(status_id):
             playthrough.statusid = int(status_id)
-            recordChanged = True
+            record_changed = True
         if notes is not None and playthrough.notes != notes:
             playthrough.notes = notes
-            recordChanged = True
+            record_changed = True
 
-        if recordChanged:
+        if record_changed:
             db.session.commit()
 
             payload = {
@@ -91,7 +94,7 @@ def resolve_update_playthrough(obj, info, playthrough_id, game_id=None, type_id=
             }
         else:
             raise NoChangeError
-        
+
     except AttributeError:
         payload = {
             'success': False,
@@ -101,14 +104,14 @@ def resolve_update_playthrough(obj, info, playthrough_id, game_id=None, type_id=
     except NoChangeError:
         payload = {
             'success': False,
-            'errors': [f'No values to change'],
+            'errors': ['No values to change'],
             'field': 'Playthroughs'
         }
-    
+
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_delete_playthrough(obj, info, playthrough_id):
+def resolve_delete_playthrough(_obj, _info, playthrough_id):
     try:
         playthrough = Playthroughs.query.get(playthrough_id)
         if playthrough is None:
@@ -124,7 +127,7 @@ def resolve_delete_playthrough(obj, info, playthrough_id):
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Playthroughs item matching id {playthrough_id} not found'],
+            'errors': [f'Playthroughs item matching id {playthrough_id} not found'], # pylint: disable=C0301
             'field': 'Playthroughs'
         }
 

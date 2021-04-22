@@ -1,41 +1,36 @@
+from ariadne import convert_kwargs_to_snake_case
 from api.base import db
 from api.models import PlatformGenerations
 from api.helpers import NoChangeError
-from ariadne import convert_kwargs_to_snake_case
 
 
 # * Generation Resolvers
-def resolve_generations(obj, info):
+def resolve_generations(_obj, _info):
     try:
-        generations = [gen.to_dict() for gen in PlatformGenerations.query.all()]
+        generations = [gen.to_dict() for gen in PlatformGenerations.query.all()] # pylint: disable=C0301
         payload = generations
-    except Exception as error:
-        print(error)
-        payload = []
+    except Exception:
+        payload = None
 
     return payload
 
 
 @convert_kwargs_to_snake_case
-def resolve_generation(obj, info, generation_id):
+def resolve_generation(_obj, _info, generation_id):
     try:
         generation = PlatformGenerations.query.get(generation_id)
         payload = generation.to_dict()
-    except AttributeError:  # todo not found
-        # payload = {
-        #     'id': -1,
-        #     'generationcode': f'N/A',
-        #     'description': f"Generation item matching id {generation_id} not found"            
-        # }
+    except AttributeError:
         payload = None
 
     return payload
 
 # * Mutations
 @convert_kwargs_to_snake_case
-def resolve_insert_generation(obj, info, generationcode, description):
+def resolve_insert_generation(_obj, _info, generationcode, description):
     try:
-        generation = PlatformGenerations(generationcode=generationcode, description=description)
+        generation = PlatformGenerations(generationcode=generationcode,
+            description=description)
         db.session.add(generation)
         db.session.commit()
 
@@ -44,27 +39,28 @@ def resolve_insert_generation(obj, info, generationcode, description):
             'field': 'PlatformGenerations',
             'id': generation.id
         }
-    except Exception as er:
+    except Exception as error:
         payload = {
             'success': False,
-            'errors': [er]
+            'errors': [error]
         }
 
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_update_generation(obj, info, generation_id, generationcode=None, description=None):
+def resolve_update_generation(_obj, _info, generation_id, generationcode=None,
+        description=None):
     try:
         generation = PlatformGenerations.query.get(generation_id)
-        recordChanged = False
-        if generationcode is not None and generation.generationcode != generationcode:
+        record_changed = False
+        if generationcode is not None and generation.generationcode != generationcode: # pylint: disable=C0301
             generation.generationcode = generationcode
-            recordChanged = True
+            record_changed = True
         if description is not None and generation.description != description:
             generation.description = description
-            recordChanged = True
+            record_changed = True
 
-        if recordChanged:
+        if record_changed:
             db.session.commit()
 
             payload = {
@@ -78,18 +74,18 @@ def resolve_update_generation(obj, info, generation_id, generationcode=None, des
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Platform Generation item matching id {generation_id} not found']
+            'errors': [f'Platform Generation item matching id {generation_id} not found'] # pylint: disable=C0301
         }
     except NoChangeError:
         payload = {
             'success': False,
-            'errors': [f'No values to change']
+            'errors': ['No values to change']
         }
 
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_delete_generation(obj, info, generation_id):
+def resolve_delete_generation(_obj, _info, generation_id):
     try:
         generation = PlatformGenerations.query.get(generation_id)
         # TODO Find better error when record does not exist
@@ -97,7 +93,7 @@ def resolve_delete_generation(obj, info, generation_id):
             raise AttributeError
         db.session.delete(generation)
         db.session.commit()
-    
+
         payload = {
             'success': True,
             'field': 'PlatformGenerations'
@@ -105,9 +101,8 @@ def resolve_delete_generation(obj, info, generation_id):
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Platform Generations item matching id {generation_id} not found'],
+            'errors': [f'Platform Generations item matching id {generation_id} not found'], # pylint: disable=C0301
             'field': 'PlatformGenerations'
         }
 
     return payload
-

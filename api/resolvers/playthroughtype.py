@@ -1,73 +1,70 @@
+from ariadne import convert_kwargs_to_snake_case
 from api.base import db
 from api.models import PlaythroughTypes
 from api.helpers import NoChangeError
-from ariadne import convert_kwargs_to_snake_case
 
-# * Queries 
-def resolve_playthroughtypes(obj, info):
+
+# * Queries
+def resolve_playthroughtypes(_obj, _info):
     try:
-        playthroughtypes = [pt.to_dict() for pt in PlaythroughTypes.query.all()]
+        playthroughtypes = [pt.to_dict() for pt in PlaythroughTypes.query.all()] # pylint: disable=C0301
         payload = playthroughtypes
-    except Exception as error:
-        print(error)
-        payload = []
+    except Exception:
+        payload = None
 
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_playthroughtype(obj, info, playthroughtype_id):
+def resolve_playthroughtype(_obj, _info, playthroughtype_id):
     try:
         playthroughtype = PlaythroughTypes.query.get(playthroughtype_id)
         payload = playthroughtype.to_dict()
     except AttributeError:
-        # payload = {
-        #     'id': -1,
-        #     'description': f"Playthrough Type item matching id {playthroughtype_id} not found",
-        #     'active': False
-        # }
         payload = None
 
     return payload
 
 # * Mutations
 @convert_kwargs_to_snake_case
-def resolve_insert_playthroughtype(obj, info, description, active):
+def resolve_insert_playthroughtype(_obj, _info, description, active):
     print("In insert resolver")
     try:
-        playthroughtype = PlaythroughTypes(description=description, active=active)
+        playthroughtype = PlaythroughTypes(description=description,
+                                           active=active)
         db.session.add(playthroughtype)
         db.session.commit()
-        
+
         payload = {
             'success': True,
             'field': 'PlaythroughTypes',
             'id': playthroughtype.id
         }
-    except Exception as er:
+    except Exception as error:
         payload = {
             'success': False,
-            'errors': [er],
+            'errors': [error],
             'field': 'PlaythroughTypes'
         }
-        
+
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_update_playthroughtype(obj, info, playthroughtype_id, description=None, active=None):
+def resolve_update_playthroughtype(_obj, _info, playthroughtype_id,
+        description=None, active=None):
     try:
         playthroughtype = PlaythroughTypes.query.get(playthroughtype_id)
-        recordChanged = False
+        record_changed = False
 
         if playthroughtype is None:
             raise AttributeError
-        if description is not None and playthroughtype.description != description:
+        if description is not None and playthroughtype.description != description: # pylint: disable=C0301
             playthroughtype.description = description
-            recordChanged = True
+            record_changed = True
         if active is not None and playthroughtype.active != bool(active):
             playthroughtype.active = bool(active)
-            recordChanged = True
-        
-        if recordChanged:
+            record_changed = True
+
+        if record_changed:
             db.session.commit()
 
             payload = {
@@ -75,33 +72,33 @@ def resolve_update_playthroughtype(obj, info, playthroughtype_id, description=No
                 'field': 'PlaythroughTypes',
                 'id': playthroughtype.id
             }
-        else: 
+        else:
             raise NoChangeError
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Playthrough Type item matching id {playthroughtype_id} not found'],
+            'errors': [f'Playthrough Type item matching id {playthroughtype_id} not found'], # pylint: disable=C0301
             'field': 'PlaythroughTypes'
         }
     except NoChangeError:
         payload = {
                 'success': False,
-                'errors': [f'No values to change'],
+                'errors': ['No values to change'],
                 'field': 'PlaythroughTypes'
             }
 
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_delete_playthroughtype(obj, info, playthroughtype_id):
+def resolve_delete_playthroughtype(_obj, _info, playthroughtype_id):
     try:
-        playthroughType = PlaythroughTypes.query.get(playthroughtype_id)
+        playthrough_type = PlaythroughTypes.query.get(playthroughtype_id)
         # TODO Find better error when record does not exist
-        if playthroughType is None:
+        if playthrough_type is None:
             raise AttributeError
-        db.session.delete(playthroughType)
+        db.session.delete(playthrough_type)
         db.session.commit()
-    
+
         payload = {
             'success': True,
             'field': 'PlaythroughTypes'
@@ -109,7 +106,7 @@ def resolve_delete_playthroughtype(obj, info, playthroughtype_id):
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Playthrough Type item matching id {playthroughtype_id} not found'],
+            'errors': [f'Playthrough Type item matching id {playthroughtype_id} not found'], # pylint: disable=C0301
             'field': 'PlaythroughTypes'
         }
 

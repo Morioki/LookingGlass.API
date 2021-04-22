@@ -1,74 +1,67 @@
+from ariadne import convert_kwargs_to_snake_case
 from api.base import db
 from api.models import PlaythroughStatuses
 from api.helpers import NoChangeError
-from ariadne import convert_kwargs_to_snake_case
 
 
 # * Queries
-def resolve_playthroughstatuses(obj, info):
+def resolve_playthroughstatuses(_obj, _info):
     try:
-        playthroughstatuses = [pt.to_dict() for pt in PlaythroughStatuses.query.all()]
+        playthroughstatuses = [pt.to_dict() for pt in PlaythroughStatuses.query.all()] # pylint: disable=C0301
         payload = playthroughstatuses
-    except Exception as error:
-        print(error)
-        payload = []
-
+    except Exception:
+        payload = None
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_playthroughstatus(obj, info, playthroughstatus_id):
+def resolve_playthroughstatus(_obj, _info, playthroughstatus_id):
     try:
         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
         payload = playthroughstatus.to_dict()
     except AttributeError:
-        # payload = {
-        #     'id': -1,
-        #     'description': f"Playthrough Status item matching id {playthroughstatus_id} not found",
-        #     'active': False
-        # }
         payload = None
-
     return payload
 
 
 #* Mutations
 @convert_kwargs_to_snake_case
-def resolve_insert_playthroughstatus(obj, info, description, active):
-    print("In insert resolver")
+def resolve_insert_playthroughstatus(_obj, _info, description, active):
     try:
-        playthroughstatus = PlaythroughStatuses(description=description, active=active)
+        playthroughstatus = PlaythroughStatuses(description=description,
+                                                active=active)
         db.session.add(playthroughstatus)
         db.session.commit()
-        
+
         payload = {
             'success': True,
             'field': 'PlaythroughStatus',
             'id': playthroughstatus.id
         }
-    except Exception as er:
+    except Exception as error:
         payload = {
             'success': False,
-            'errors': [er]
+            'errors': [error]
         }
-        
+
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_update_playthroughstatus(obj, info, playthroughstatus_id, description=None, active=None):
+def resolve_update_playthroughstatus(_obj, _info, playthroughstatus_id,
+        description=None, active=None):
     try:
         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
-        recordChanged = False
+        record_changed = False
 
         if playthroughstatus is None:
-            raise AttributeError        
-        if description is not None and playthroughstatus.description != description:
+            raise AttributeError
+        if description is not None and playthroughstatus.description != description: # pylint: disable=C0301
             playthroughstatus.description = description
-            recordChanged = True
+            record_changed = True
         if active is not None and playthroughstatus.active != bool(active):
             playthroughstatus.active = bool(active)
-            recordChanged = True
-        
-        if recordChanged:
+            record_changed = True
+
+        if record_changed:
             db.session.commit()
 
             payload = {
@@ -81,18 +74,18 @@ def resolve_update_playthroughstatus(obj, info, playthroughstatus_id, descriptio
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Playthrough Status item matching id {playthroughstatus_id} not found']
+            'errors': [f'Playthrough Status item matching id {playthroughstatus_id} not found'] # pylint: disable=C0301
         }
     except NoChangeError:
         payload = {
                 'success': False,
-                'errors': [f'No values to change']
+                'errors': ['No values to change']
             }
 
     return payload
 
 @convert_kwargs_to_snake_case
-def resolve_delete_playthroughstatus(obj, info, playthroughstatus_id):
+def resolve_delete_playthroughstatus(_obj, _info, playthroughstatus_id):
     try:
         playthroughstatus = PlaythroughStatuses.query.get(playthroughstatus_id)
         # TODO Find better error when record does not exist
@@ -100,7 +93,7 @@ def resolve_delete_playthroughstatus(obj, info, playthroughstatus_id):
             raise AttributeError
         db.session.delete(playthroughstatus)
         db.session.commit()
-    
+
         payload = {
             'success': True,
             'field': 'PlaythroughStatuses'
@@ -108,7 +101,7 @@ def resolve_delete_playthroughstatus(obj, info, playthroughstatus_id):
     except AttributeError:
         payload = {
             'success': False,
-            'errors': [f'Playthrough Status item matching id {playthroughstatus_id} not found'],
+            'errors': [f'Playthrough Status item matching id {playthroughstatus_id} not found'], # pylint: disable=C0301
             'field': 'PlaythroughStatuses'
         }
 
