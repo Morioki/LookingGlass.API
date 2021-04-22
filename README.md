@@ -1,6 +1,7 @@
 # LookingGlassAPI
 
-[![license](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![license](https://img.shields.io/badge/license-MIT-green)](LICENSE) 
+[![Lint Code Base](https://github.com/Morioki/LookingGlass.API/actions/workflows/linter.yml/badge.svg?branch=main)](https://github.com/Morioki/LookingGlass.API/actions/workflows/linter.yml)
 
  An GraphQL API wrapper around a postgres database backend. The API is designed for use in gameplay tracking systems Looking Glass Desktop and Looking Glass Mobile.
 
