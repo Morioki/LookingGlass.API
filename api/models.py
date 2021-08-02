@@ -171,12 +171,14 @@ class Games(db.Model):
     entrydate = db.Column(db.DateTime(timezone=True), default=func.now())
 
     user = db.relationship('Users', backref='games')
+    # playthroughs = db.relationship('Playthroughs', backref='games')
     platforms = db.relationship('Platforms',
                                 secondary=gameplatforms,
                                 backref='games')
     genres = db.relationship('Genres',secondary=genretags, backref='games')
 
     def to_dict(self):
+        # print(self)
         return {
             'id': self.id,
             'name': self.gamename,
@@ -188,6 +190,7 @@ class Games(db.Model):
             'mainseries': self.mainseries,
             'subseries': self.subseries,
             'notes': self.notes,
+            # 'playthroughs': [playthrough.to_dict() for playthrough in self.playthroughs],
             'entrydate': self.entrydate.isoformat()
         }
 
@@ -211,6 +214,7 @@ class Playthroughs(db.Model):
 
     user = db.relationship('Users', backref='playthroughs')
     game = db.relationship('Games', backref='playthroughs')
+    # game = db.relationship('Games' ),
     type = db.relationship('PlaythroughTypes', backref='playthroughs')
     status = db.relationship('PlaythroughStatuses', backref='playthroughs')
 

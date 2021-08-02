@@ -6,6 +6,7 @@ from api.helpers import NoChangeError
 # * Query
 @convert_kwargs_to_snake_case
 def resolve_games(__obj, info, platform_id=None, genre_id=None):
+    print("entering resolver")
     try:
         user = info.context.get('user')
         games_query = Games.query.filter_by(userid = user.id)

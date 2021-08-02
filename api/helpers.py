@@ -5,6 +5,7 @@ from graphql import default_field_resolver
 from api.models import Users
 
 def get_user_context(request):
+    # print("hi")
     context = {}
     context['request'] = request
     context['user'] = None
@@ -12,8 +13,8 @@ def get_user_context(request):
         token = request.headers['API_TOKEN']
         try:
             user = Users.query.filter_by(accesstoken = token).one()
-        except Exception: # as er: # pylint: disable=W0703
-            # print(er)
+        except Exception as er: # pylint: disable=W0703
+            print(er)
             return context
         if user is not None:
             context['user'] = user

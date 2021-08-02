@@ -6,6 +6,7 @@ from ariadne.constants import PLAYGROUND_HTML
 from api.base import app
 from api.helpers import get_user_context
 from api.graphql import schema
+from ariadne.contrib.tracing.apollotracing import ApolloTracingExtensionSync
 
 CORS(app)
 
@@ -21,7 +22,7 @@ def graphql_playground():
 
 @app.route('/graphql', methods=['POST'])
 def graphql_server():
-    print(request.headers)
+    # print(request.headers)
 
     # data = request.get_json() if request.is_json else json.loads(request.data)
     data = request.get_json()
@@ -29,7 +30,7 @@ def graphql_server():
         schema,
         data,
         context_value=get_user_context(request),
-        debug=app.debug
+        debug=app.debug#,
         # extensions=[ApolloTracingExtensionSync]
     )
     status_code = 200 if success else 400
